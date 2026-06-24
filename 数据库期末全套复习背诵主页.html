@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数据库系统概论 - 期末全套复习背诵主页</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root { --bg-primary: #f8fafc; --bg-secondary: #ffffff; --text-primary: #1e293b; --text-secondary: #475569; --accent: #6366f1; --accent-light: #e0e7ff; --border: #e2e8f0; --sql-bg: #1e293b; --sql-text: #f1f5f9; --level-3-bg: #fef2f2; --level-3-text: #dc2626; --level-2-bg: #fffbeb; --level-2-text: #d97706; --level-1-bg: #f0f9ff; --level-1-text: #0284c7; }
+        body.dark-mode { --bg-primary: #0f172a; --bg-secondary: #1e293b; --text-primary: #f1f5f9; --text-secondary: #cbd5e1; --accent: #818cf8; --accent-light: #312e81; --border: #334155; --sql-bg: #0f172a; --sql-text: #e2e8f0; --level-3-bg: #450a0a; --level-3-text: #fca5a5; --level-2-bg: #451a03; --level-2-text: #fcd34d; --level-1-bg: #0c4a6e; --level-1-text: #7dd3fc; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif; line-height: 1.7; background: var(--bg-primary); color: var(--text-primary); padding-left: 280px; transition: all 0.3s ease; }
+        .sidebar { position: fixed; left: 0; top: 0; bottom: 0; width: 280px; background: var(--bg-secondary); border-right: 1px solid var(--border); padding: 20px; overflow-y: auto; z-index: 1000; }
+        .sidebar h2 { font-size: 1.1em; color: var(--accent); margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid var(--accent); }
+        .sidebar nav a { display: block; padding: 8px 12px; color: var(--text-secondary); text-decoration: none; border-radius: 6px; margin-bottom: 4px; font-size: 0.85em; transition: all 0.2s; }
+        .sidebar nav a:hover { background: var(--accent-light); color: var(--accent); }
+        .main-content { max-width: 950px; margin: 0 auto; padding: 30px; }
+        header { background: linear-gradient(135deg, var(--accent) 0%, #8b5cf6 100%); color: white; padding: 40px 30px; border-radius: 16px; margin-bottom: 30px; text-align: center; }
+        header h1 { font-size: 1.8em; margin-bottom: 10px; }
+        .section { background: var(--bg-secondary); border-radius: 12px; padding: 25px; margin-bottom: 25px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .section h2 { color: var(--accent); font-size: 1.4em; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 2px solid var(--accent-light); }
+        .section h3 { color: var(--text-primary); font-size: 1.1em; margin: 25px 0 12px; }
+        .level-badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 0.8em; font-weight: 600; }
+        .level-3 { background: var(--level-3-bg); color: var(--level-3-text); }
+        .level-2 { background: var(--level-2-bg); color: var(--level-2-text); }
+        .level-1 { background: var(--level-1-bg); color: var(--level-1-text); }
+        .content-block { background: var(--bg-primary); border-radius: 8px; padding: 18px; margin: 15px 0; }
+        .short-version { background: var(--accent-light); border-left: 4px solid var(--accent); padding: 15px; margin: 15px 0; border-radius: 0 8px 8px 0; }
+        .meta-info { display: flex; gap: 20px; margin-top: 15px; padding-top: 15px; border-top: 1px solid var(--border); font-size: 0.9em; color: var(--text-secondary); flex-wrap: wrap; }
+        .sql-block { background: var(--sql-bg); color: var(--sql-text); padding: 18px; border-radius: 8px; overflow-x: auto; font-family: "Consolas", "Monaco", monospace; font-size: 0.9em; margin: 12px 0; white-space: pre-wrap; }
+        .question-block { background: var(--bg-primary); border: 1px solid var(--border); border-radius: 8px; padding: 18px; margin: 15px 0; }
+        .answer-block { background: var(--level-1-bg); color: var(--level-1-text); padding: 15px; border-radius: 6px; margin-top: 12px; }
+        .theme-toggle { position: fixed; bottom: 25px; right: 25px; background: var(--accent); color: white; border: none; width: 55px; height: 55px; border-radius: 50%; cursor: pointer; box-shadow: 0 4px 20px rgba(99,102,241,0.4); z-index: 1000; font-size: 1.4em; }
+        .mobile-menu { display: none; position: fixed; top: 15px; left: 15px; background: var(--bg-secondary); border: 1px solid var(--border); padding: 10px 15px; border-radius: 8px; cursor: pointer; z-index: 1001; }
+        .stats-box { background: var(--accent-light); border: 1px solid var(--accent); border-radius: 8px; padding: 15px; margin-bottom: 20px; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
+        .stat-item { background: var(--bg-secondary); padding: 10px; border-radius: 6px; text-align: center; }
+        .stat-item .num { font-size: 1.5em; font-weight: bold; color: var(--accent); }
+        .stat-item .label { font-size: 0.85em; color: var(--text-secondary); }
+        .part-divider { text-align: center; padding: 30px 0; margin: 40px 0; }
+        .part-divider h2 { display: inline-block; background: var(--bg-secondary); padding: 10px 30px; border-radius: 30px; color: var(--accent); border: 2px solid var(--accent); }
+        @media (max-width: 768px) { body { padding-left: 0; } .sidebar { transform: translateX(-100%); transition: transform 0.3s; } .sidebar.open { transform: translateX(0); } .mobile-menu { display: block; } }
+    </style>
+</head>
+<body>
+    <button class="mobile-menu" onclick="toggleSidebar()">☰ 目录</button>
+    <aside class="sidebar" id="sidebar">
+        <h2>📚 复习导航</h2>
+        <nav>
+            <a href="#part-a">━━ 分区 A 提纲逐点精讲 ━━</a>
+            <a href="#chapter1">第一章 基础知识与概念</a>
+            <a href="#chapter2">第二章 关系理论</a>
+            <a href="#chapter3">第三章 数据库设计</a>
+            <a href="#chapter4">第四章 安全性与并发</a>
+            <a href="#chapter5">第五章 SQL 语言</a>
+            <a href="#chapter6">第六章 数据仓库</a>
+            <a href="#sql-questions">SQL 编程应用题</a>
+            <a href="#normalization">范式证明题</a>
+            <a href="#er-design">ER 图转换设计题</a>
+            <a href="#concurrency">并发封锁分析题</a>
+            <a href="#recovery">数据库恢复大题</a>
+            <a href="#warehouse">数仓设计题</a>
+            <a href="#fill-in">填空/补全题</a>
+            <a href="#part-b" style="margin-top:20px">━━ 分区 B 单选选择题库 ━━</a>
+        </nav>
+    </aside>
+    <header>
+        <h1>数据库系统概论</h1>
+        <p>期末全套整合复习资料</p>
+        <p>基于课堂 PPT + 两份复习提纲 + 选择题题库整理</p>
+        <p style="margin-top:10px; opacity:0.8; font-size:0.85em">2026 年 6 月整理</p>
+    </header>
+    <div class="main-content">
+        <div class="part-divider" id="part-a"><h2>分区 A 提纲逐点精讲主板块</h2></div>
+<div class="section" id="chapter1"><h2>第一章 基础知识与概念</h2>
+            <h3>DB, DBMS 和 DBS 三者间的关系 <span class="level-badge level-3">★★★</span></h3>
+            <div class="content-block"><strong>PPT 核心知识点：</strong><p>DB（数据库）是长期存储在计算机内有组织的可共享的大量数据集合。DBMS（数据库管理系统）是位于用户与操作系统之间的数据管理软件，用于科学组织存储数据、高效获取和维护数据。DBS（数据库系统）是由数据库、DBMS、应用开发工具、应用程序和数据库管理员组成的完整系统。关系：DBS 包含 DB 和 DBMS，DBMS 管理 DB。</p></div>
+            <div class="short-version"><strong>精简背诵版：</strong><br>DB 是数据集合，DBMS 是管理软件，DBS 是完整系统。DBS=DB+DBMS+ 应用+DBA。</div>
+            <div class="meta-info"><span>📝 考察题型：单选/名词解释/简答</span><span>🎯 掌握层级：熟读识记</span></div>
+
+            <h3>数据库管理系统的主要功能 <span class="level-badge level-3">★★★</span></h3>
+            <div class="content-block"><strong>PPT 核心知识点：</strong><p>六大功能：1.数据库定义和创建（DDL 定义模式、表、视图、索引、用户、安全、完整性）；2.数据组织存储和管理（确定文件结构、存取方式如索引/哈希/顺序）；3.数据存取（DML 检索插入修改删除）；4.事务管理和运行管理（恢复、并发控制、安全检查、完整性检查、日志）；5.数据库建立和维护（初始建立、转换、转储恢复、重组、性能检测）；6.其他功能（通信、数据转换、异构互访）。</p></div>
+            <div class="short-version"><strong>精简背诵版：</strong><br>六大功能：定义创建、组织存储、数据存取、事务运行管理、建立维护、其他通信转换。</div>
+            <div class="meta-info"><span>📝 考察题型：简答/论述</span><span>🎯 掌握层级：全文背诵默写</span></div>
+
+            <h3>数据模型的组成 <span class="level-badge level-3">★★★</span></h3>
+            <div class="content-block"><strong>PPT 核心知识点：</strong><p>数据模型由三部分组成：1.数据结构（描述数据库组成对象及联系，最重要）；2.数据操作（检索和更新两大类）；3.完整性约束（完整性规则集合，保证数据正确有效相容）。</p></div>
+            <div class="short-version"><strong>精简背诵版：</strong><br>三要素：数据结构、数据操作、完整性约束。数据结构最重要。</div>
+            <div class="meta-info"><span>📝 考察题型：选择/名词解释/填空</span><span>🎯 掌握层级：全文背诵默写</span></div>
+
+            <h3>概念模型及其特点 <span class="level-badge level-2">★★</span></h3>
+            <div class="content-block"><strong>PPT 核心知识点：</strong><p>概念模型也称信息模型，按用户观点建模，主要用于数据库设计。特点：独立于具体机器和 DBMS；用于信息世界建模，是现实世界到信息世界第一层抽象；语义表达能力强，易于理解；易于变动修改。</p></div>
+            <div class="short-version"><strong>精简背诵版：</strong><br>概念模型=信息模型。特点：独立于机器 DBMS、现实到信息第一层抽象、语义强易理解、易变动。</div>
+            <div class="meta-info"><span>📝 考察题型：选择/名词解释</span><span>🎯 掌握层级：熟读识记</span></div>
+
+            <h3>数据独立性是什么 <span class="level-badge level-3">★★★</span></h3>
+            <div class="content-block"><strong>PPT 核心知识点：</strong><p>数据独立性指应用程序和数据库数据结构相互独立。分为：1.物理独立性（应用程序与磁盘存储数据相互独立，物理存储改变应用不变）；2.逻辑独立性（应用程序与数据逻辑结构相互独立，逻辑结构改变应用不变）。</p></div>
+            <div class="short-version"><strong>精简背诵版：</strong><br>物理独立：存储变应用不变。逻辑独立：结构变应用不变。</div>
+            <div class="meta-info"><span>📝 考察题型：选择/简答/填空</span><span>🎯 掌握层级：全文背诵默写</span></div>
+
+            <h3>数据库系统的特点 <span class="level-badge level-3">★★★</span></h3>
+            <div class="content-block"><strong>PPT 核心知识点：</strong><p>四大特点：1.数据结构化（整体结构化）；2.数据共享性高、冗余度低、易扩充；3.数据独立性高（物理 + 逻辑）；4.数据由 DBMS 统一管理控制（安全、完整、并发、恢复）。</p></div>
+            <div class="short-version"><strong>精简背诵版：</strong><br>四大特点：结构化、共享高冗余低、独立性高、DBMS 统一管理。</div>
+            <div class="meta-info"><span>📝 考察题型：选择/简答</span><span>🎯 掌握层级：全文背诵默写</span></div>
+
+            <h3>数据库的完整性 <span class="level-badge level-2">★★</span></h3>
+            <div class="content-block"><strong>PPT 核心知识点：</strong><p>数据库完整性指数据的正确性和相容性。完整性规则防止不符合语义的数据。三类完整性：实体完整性、参照完整性、用户定义完整性。</p></div>
+            <div class="short-version"><strong>精简背诵版：</strong><br>完整性=正确性 + 相容性。三类：实体完整、参照完整、用户定义完整。</div>
+            <div class="meta-info"><span>📝 考察题型：选择/名词解释/填空</span><span>🎯 掌握层级：熟读识记</span></div>
+
+            <h3>什么是冗余数据 <span class="level-badge level-1">★</span></h3>
+            <div class="content-block"><strong>PPT 核心知识点：</strong><p>冗余数据是数据库中重复的不必要的数据。危害：浪费存储空间、导致数据不一致、增加维护代价。数据库系统目标：减少数据冗余，避免数据不一致。</p></div>
+            <div class="short-version"><strong>精简背诵版：</strong><br>冗余数据=重复不必要数据。危害：浪费空间、不一致、增加维护代价。</div>
+            <div class="meta-info"><span>📝 考察题型：选择/名词解释</span><span>🎯 掌握层级：熟读识记</span></div>
+
+            <h3>数据库系统必须提供的数据控制功能 <span class="level-badge level-3">★★★</span></h3>
+            <div class="content-block"><strong>PPT 核心知识点：</strong><p>四大控制功能：1.数据库安全性（防止非法使用造成泄露更改破坏）；2.数据库完整性（保证数据正确性和相容性）；3.并发控制（协调多用户并发操作防止不一致）；4.数据库恢复（从错误状态恢复到已知正确状态）。</p></div>
+            <div class="short-version"><strong>精简背诵版：</strong><br>四大控制：安全性、完整性、并发控制、数据库恢复。</div>
+            <div class="meta-info"><span>📝 考察题型：选择/简答</span><span>🎯 掌握层级：全文背诵默写</span></div>
+
+            <h3>DBMS 存取控制机制主要包括 <span class="level-badge level-2">★★</span></h3>
+            <div class="content-block"><strong>PPT 核心知识点：</strong><p>存取控制机制主要包括：1.用户标识和鉴定；2.存取权限定义；3.存取权限检查；4.视图机制；5.审计；6.数据加密。分为自主存取控制和强制存取控制两部分。</p></div>
+            <div class="short-version"><strong>精简背诵版：</strong><br>六机制：用户鉴定、权限定义、权限检查、视图、审计、加密。分自主和强制两类。</div>
+            <div class="meta-info"><span>📝 考察题型：选择/简答</span><span>🎯 掌握层级：熟读识记</span></div>
+</div><div class="section" id="chapter2"><h2>第二章 关系数据库理论与范式</h2>
+            <h3>关系模式的定义 <span class="level-badge level-3">★★★</span></h3>
+            <div class="content-block"><strong>PPT 核心知识点：</strong><p>关系模式是对关系的描述，形式化表示为 R(U, D, DOM, F)。R 为关系名，U 为属性名集合，D 为属性域，DOM 为属性向域的映象集合，F 为属性间数据依赖关系集合。通常简化为 R(U) 或 R(A1, A2, ..., An)。</p></div>
+            <div class="short-version"><strong>精简背诵版：</strong><br>关系模式=对关系的描述。形式化 R(U,D,DOM,F)，简化 R(U)。</div>
+            <div class="meta-info"><span>📝 考察题型：名词解释/选择</span><span>🎯 掌握层级：熟读识记</span></div>
+
+            <h3>关系数据库中基于数学上两类运算是关系代数和关系演算 <span class="level-badge level-2">★★</span></h3>
+            <div class="content-block"><strong>PPT 核心知识点：</strong><p>关系数据库基于的两类数学运算：1.关系代数（以集合代数为基础，运算对象和结果都是关系）；2.关系演算（以谓词演算为基础，分元组关系演算和域关系演算）。</p></div>
+            <div class="short-version"><strong>精简背诵版：</strong><br>两类运算：关系代数（集合基础）、关系演算（谓词基础，分元组和域）。</div>
+            <div class="meta-info"><span>📝 考察题型：选择/填空</span><span>🎯 掌握层级：熟读识记</span></div>
+
+            <h3>常用的关系运算 <span class="level-badge level-3">★★★</span></h3>
+            <div class="content-block"><strong>PPT 核心知识点：</strong><p>五种基本运算：并、差、选择、投影、笛卡尔积。专门的关系运算：选择、投影、连接。自然连接：若两关系无公共属性，自然连接退化为笛卡尔积。</p></div>
+            <div class="short-version"><strong>精简背诵版：</strong><br>五基本：并差选择投影笛卡尔积。专门：选择投影连接。自然连接无公共属性退化为笛卡尔积。</div>
+            <div class="meta-info"><span>📝 考察题型：选择/计算/简答</span><span>🎯 掌握层级：全文背诵默写</span></div>
+
+            <h3>1NF, 2NF, 3NF, BCNF <span class="level-badge level-3">★★★</span></h3>
+            <div class="content-block"><strong>PPT 核心知识点：</strong><p>1NF：属性不可再分（原子性）。2NF：在 1NF 基础上消除非主属性对码的部分函数依赖。3NF：在 2NF 基础上消除非主属性对码的传递函数依赖。BCNF：在 3NF 基础上消除主属性对码的部分和传递函数依赖。二元关系（只有两个属性）一定满足 BCNF。</p></div>
+            <div class="short-version"><strong>精简背诵版：</strong><br>1NF 属性原子。2NF 消除非主属性部分依赖。3NF 消除非主属性传递依赖。BCNF 消除主属性部分和传递依赖。二元关系必 BCNF。</div>
+            <div class="meta-info"><span>📝 考察题型：简答/计算/论述/范式证明题</span><span>🎯 掌握层级：可独立书写全套证明步骤</span></div>
+
+            <h3>在关系数据库的规范化理论中，在执行分解时，必须遵守规范化原则 <span class="level-badge level-2">★★</span></h3>
+            <div class="content-block"><strong>PPT 核心知识点：</strong><p>分解必须遵守两原则：1.无损连接性（分解后关系自然连接可恢复原关系，信息不丢失）；2.保持函数依赖（分解后保持原有函数依赖关系）。</p></div>
+            <div class="short-version"><strong>精简背诵版：</strong><br>分解两原则：无损连接性、保持函数依赖。</div>
+            <div class="meta-info"><span>📝 考察题型：选择/简答</span><span>🎯 掌握层级：熟读识记</span></div>
+
+            <h3>什么是主属性 <span class="level-badge level-1">★</span></h3>
+            <div class="content-block"><strong>PPT 核心知识点：</strong><p>主属性是包含在任何一个候选码中的属性。不包含在任何候选码中的属性称为非主属性（非码属性）。</p></div>
+            <div class="short-version"><strong>精简背诵版：</strong><br>主属性=包含在任一候选码中的属性。</div>
+            <div class="meta-info"><span>📝 考察题型：选择/名词解释/填空</span><span>🎯 掌握层级：熟读识记</span></div>
+</div><div class="section" id="chapter3"><h2>第三章 数据库设计与 E-R 图</h2>
+            <h3>数据库设计的主要步骤 <span class="level-badge level-3">★★★</span></h3>
+            <div class="content-block"><strong>PPT 核心知识点：</strong><p>六个阶段：1.需求分析（了解分析用户需求）；2.概念结构设计（形成独立于 DBMS 的概念模型 E-R 图）；3.逻辑结构设计（转换为 DBMS 支持的数据模型如关系模型）；4.物理结构设计（选取最适合的物理结构）；5.数据库实施（建立数据库）；6.数据库运行和维护（评价调整修改）。</p></div>
+            <div class="short-version"><strong>精简背诵版：</strong><br>六步骤：需求分析、概念设计（E-R）、逻辑设计（转关系）、物理设计、实施、运行维护。</div>
+            <div class="meta-info"><span>📝 考察题型：简答/论述</span><span>🎯 掌握层级：全文背诵默写</span></div>
+
+            <h3>合并 E-R 图过程中，通常存在哪些冲突 <span class="level-badge level-2">★★</span></h3>
+            <div class="content-block"><strong>PPT 核心知识点：</strong><p>三类冲突：1.属性冲突（属性域冲突如类型取值范围单位不同）；2.命名冲突（同名异义、异名同义）；3.结构冲突（同一对象不同抽象、属性组成不同、联系类型不同）。</p></div>
+            <div class="short-version"><strong>精简背诵版：</strong><br>三冲突：属性冲突、命名冲突（同名异义异名同义）、结构冲突。</div>
+            <div class="meta-info"><span>📝 考察题型：选择/简答</span><span>🎯 掌握层级：熟读识记</span></div>
+
+            <h3>ER 图如何转换成关系数据模型 <span class="level-badge level-3">★★★</span></h3>
+            <div class="content-block"><strong>PPT 核心知识点：</strong><p>转换规则：1.实体型转换为关系模式（实体属性→关系属性，实体码→关系码）；2.1:1 联系可转换为独立关系或与任一端合并；3.1:n 联系可转换为独立关系或与 n 端合并（推荐）；4.m:n 联系必须转换为独立关系，码由两端实体码组合。</p></div>
+            <div class="short-version"><strong>精简背诵版：</strong><br>实体→关系。1:1→独立或任一端。1:n→独立或 n 端。m:n→必须独立，码为两端组合。</div>
+            <div class="meta-info"><span>📝 考察题型：简答/计算/设计/数仓建模设计题</span><span>🎯 掌握层级：可独立书写全套证明步骤</span></div>
+
+            <h3>在 E-R 模型的图形表示 <span class="level-badge level-1">★</span></h3>
+            <div class="content-block"><strong>PPT 核心知识点：</strong><p>矩形表示实体型，椭圆表示属性，菱形表示联系型，连线标注联系类型（1:1, 1:n, m:n）。</p></div>
+            <div class="short-version"><strong>精简背诵版：</strong><br>矩形实体、椭圆属性、菱形联系、连线标注类型。</div>
+            <div class="meta-info"><span>📝 考察题型：选择/填空</span><span>🎯 掌握层级：熟读识记</span></div>
+
+            <h3>数据库设计中，各个阶段的任务 <span class="level-badge level-2">★★</span></h3>
+            <div class="content-block"><strong>PPT 核心知识点：</strong><p>需求分析阶段：收集分析用户需求，形成需求说明书。概念设计阶段：形成 E-R 图。逻辑设计阶段：转换为关系模式。物理设计阶段：选择存储结构和存取方法。实施阶段：建库加载数据。运行维护：评价调整。</p></div>
+            <div class="short-version"><strong>精简背诵版：</strong><br>需求分析→概念设计→逻辑设计→物理设计→实施→运行维护。</div>
+            <div class="meta-info"><span>📝 考察题型：选择/简答</span><span>🎯 掌握层级：熟读识记</span></div>
+
+            <h3>什么叫视图 <span class="level-badge level-2">★★</span></h3>
+            <div class="content-block"><strong>PPT 核心知识点：</strong><p>视图是从一个或几个基本表（或其他视图）导出的表，是虚表。数据库中只存放视图定义，不存放视图数据。视图在概念上与基本表等同。</p></div>
+            <div class="short-version"><strong>精简背诵版：</strong><br>视图=从基本表导出的虚表。只存定义不存数据。</div>
+            <div class="meta-info"><span>📝 考察题型：名词解释/简答</span><span>🎯 掌握层级：熟读识记</span></div>
+
+            <h3>视图是否都可以更新？为什么 <span class="level-badge level-2">★★</span></h3>
+            <div class="content-block"><strong>PPT 核心知识点：</strong><p>不是所有视图都可以更新。可更新条件：行列子集视图（从单个基本表导出且包含主键）、不含聚集函数/GROUP BY/DISTINCT。不可更新：多表导出、含聚集函数、含 GROUP BY、含 DISTINCT、嵌套查询。</p></div>
+            <div class="short-version"><strong>精简背诵版：</strong><br>不是都可更新。可更新：单表 + 主键。不可：多表、聚集函数、GROUP BY、DISTINCT、嵌套。</div>
+            <div class="meta-info"><span>📝 考察题型：简答/判断</span><span>🎯 掌握层级：熟读识记</span></div>
+
+            <h3>游标的功能 <span class="level-badge level-2">★★</span></h3>
+            <div class="content-block"><strong>PPT 核心知识点：</strong><p>游标功能：1.定位功能（指向结果集某行）；2.遍历功能（逐行处理）；3.协调作用（协调 SQL 集合处理与宿主语言单记录处理）；4.操作功能（FETCH、UPDATE、DELETE）。</p></div>
+            <div class="short-version"><strong>精简背诵版：</strong><br>四功能：定位、遍历、协调、操作。</div>
+            <div class="meta-info"><span>📝 考察题型：选择/简答</span><span>🎯 掌握层级：熟读识记</span></div>
+
+            <h3>数据字典的内容和作用 <span class="level-badge level-3">★★★</span></h3>
+            <div class="content-block"><strong>PPT 核心知识点：</strong><p>内容：数据项、数据结构、数据流、数据存储、处理过程。具体包括关系定义表、属性表、视图表、视图属性表、视图表达式表、用户表、存取权限表等。作用：DBMS 运行基本依据、提供设计说明信息、供 DBA 查阅、支持查询优化完整性检查安全性检查。</p></div>
+            <div class="short-version"><strong>精简背诵版：</strong><br>内容：数据项结构流存储过程。作用：DBMS 运行依据、设计说明、供查阅、支持优化检查。</div>
+            <div class="meta-info"><span>📝 考察题型：简答/论述</span><span>🎯 掌握层级：全文背诵默写</span></div>
+
+            <h3>ODBC <span class="level-badge level-1">★</span></h3>
+            <div class="content-block"><strong>PPT 核心知识点：</strong><p>ODBC（开放数据库互连）是微软提出的数据库访问接口标准。提供统一 API，使应用程序能访问任何支持 ODBC 的数据库。核心：应用程序→ODBC API→驱动管理器→数据库驱动。</p></div>
+            <div class="short-version"><strong>精简背诵版：</strong><br>ODBC=开放数据库互连。微软标准，统一 API 访问任何 ODBC 数据库。</div>
+            <div class="meta-info"><span>📝 考察题型：选择/名词解释</span><span>🎯 掌握层级：熟读识记</span></div>
+</div><div class="section" id="chapter4"><h2>第四章 安全性事务与并发控制</h2>
+            <h3>事务的 ACID 特性 <span class="level-badge level-3">★★★</span></h3>
+            <div class="content-block"><strong>PPT 核心知识点：</strong><p>事务四特性 ACID：1.原子性 Atomicity（事务操作要么都做要么都不做）；2.一致性 Consistency（从一个一致性状态变到另一个一致性状态）；3.隔离性 Isolation（执行不被其他事务干扰）；4.持久性 Durability（提交后改变永久性，其他操作或故障不影响）。</p></div>
+            <div class="short-version"><strong>精简背诵版：</strong><br>ACID：原子性（都做或都不做）、一致性（状态到状态）、隔离性（不被干扰）、持久性（提交后永久）。</div>
+            <div class="meta-info"><span>📝 考察题型：简答/论述</span><span>🎯 掌握层级：全文背诵默写</span></div>
+
+            <h3>什么是日志文件？为什么要设立日志文件 <span class="level-badge level-3">★★★</span></h3>
+            <div class="content-block"><strong>PPT 核心知识点：</strong><p>日志文件是记录事务对数据库更新操作的文件。设立原因：1.事务故障恢复（撤销未完成事务）；2.系统故障恢复（重做已提交 + 撤销未完成）；3.介质故障恢复（结合转储）；4.审计（记录所有操作）。日志记录内容：事务开始 BEGIN、提交 COMMIT、回滚 ROLLBACK、元组增删改、索引增删改。</p></div>
+            <div class="short-version"><strong>精简背诵版：</strong><br>日志=记录更新操作的文件。原因：事务故障恢复、系统故障恢复、介质故障恢复、审计。</div>
+            <div class="meta-info"><span>📝 考察题型：简答/论述</span><span>🎯 掌握层级：全文背诵默写</span></div>
+
+            <h3>登记日志文件时为什么必须先写日志文件，后写数据库 <span class="level-badge level-3">★★★</span></h3>
+            <div class="content-block"><strong>PPT 核心知识点：</strong><p>先写日志原因：1.保证可恢复性（防止故障时无法判断操作状态）；2.遵循 WAL 原则 Write-Ahead Logging（修改前先记日志）；3.确保持久性（崩溃后可根据日志恢复）。</p></div>
+            <div class="short-version"><strong>精简背诵版：</strong><br>原因：保证可恢复性、遵循 WAL 原则、确保持久性。</div>
+            <div class="meta-info"><span>📝 考察题型：简答/论述</span><span>🎯 掌握层级：全文背诵默写</span></div>
+
+            <h3>使用检查点方法进行数据库恢复的步骤 <span class="level-badge level-3">★★★</span></h3>
+            <div class="content-block"><strong>PPT 核心知识点：</strong><p>检查点恢复步骤：1.建立检查点（缓冲区已修改数据写回磁盘，日志记录检查点）；2.故障后从最后检查点扫描日志；3.重做 REDO 检查点后已提交事务；4.撤销 UNDO 检查点后未完成事务；5.恢复到一致状态。</p></div>
+            <div class="short-version"><strong>精简背诵版：</strong><br>五步：建检查点、扫描日志、REDO 已提交、UNDO 未完成、恢复一致。</div>
+            <div class="meta-info"><span>📝 考察题型：简答/论述</span><span>🎯 掌握层级：全文背诵默写</span></div>
+
+            <h3>并发操作可能会产生哪几类数据不一致 <span class="level-badge level-3">★★★</span></h3>
+            <div class="content-block"><strong>PPT 核心知识点：</strong><p>三类不一致：1.丢失修改 Lost Update（T2 破坏 T1 结果）；2.不可重复读 Non-Repeatable Read（两次读取不同）；3.读脏数据 Dirty Read（读到未提交后被撤销的数据）。</p></div>
+            <div class="short-version"><strong>精简背诵版：</strong><br>三类：丢失修改、不可重复读、读脏数据。</div>
+            <div class="meta-info"><span>📝 考察题型：简答/论述/案例</span><span>🎯 掌握层级：全文背诵默写</span></div>
+
+            <h3>什么样的并发调度是正确的调度 <span class="level-badge level-3">★★★</span></h3>
+            <div class="content-block"><strong>PPT 核心知识点：</strong><p>正确调度=可串行化调度。定义：多个事务并发执行结果与某次序串行执行结果相同。判断标准：冲突可串行化（通过交换非冲突操作可变为串行调度）。充分条件：遵循 2PL 的调度一定可串行化。</p></div>
+            <div class="short-version"><strong>精简背诵版：</strong><br>正确调度=可串行化。定义：并发结果=某次序串行结果。充分条件：遵循 2PL。</div>
+            <div class="meta-info"><span>📝 考察题型：简答/论述/判断</span><span>🎯 掌握层级：全文背诵默写</span></div>
+
+            <h3>比较一、二、三级封锁协议 <span class="level-badge level-3">★★★</span></h3>
+            <div class="content-block"><strong>PPT 核心知识点：</strong><p>一级封锁协议：修改前加 X 锁到事务结束，防止丢失修改，不能防止脏读和不可重复读。二级封锁协议：一级基础上读前加 S 锁读完释放，防止丢失修改 + 脏读，不能防止不可重复读。三级封锁协议：一级基础上读前加 S 锁到事务结束，防止丢失修改 + 脏读 + 不可重复读。</p></div>
+            <div class="short-version"><strong>精简背诵版：</strong><br>一级：改前加 X 锁到结束→防丢失修改。二级：读前加 S 锁读完释放→防丢失 + 脏读。三级：读前加 S 锁到结束→防丢失 + 脏读 + 不可重复读。</div>
+            <div class="meta-info"><span>📝 考察题型：简答/论述/对比</span><span>🎯 掌握层级：全文背诵默写</span></div>
+
+            <h3>两段锁协议（2PL） <span class="level-badge level-3">★★★</span></h3>
+            <div class="content-block"><strong>PPT 核心知识点：</strong><p>两段锁协议 Two-Phase Locking：所有事务分两阶段加锁解锁。第一阶段扩展阶段（只加锁不释放），第二阶段收缩阶段（只释放不加锁）。作用：保证并发调度可串行化。注意：满足 2PL 的调度一定可串行化，但可串行化调度不一定满足 2PL。</p></div>
+            <div class="short-version"><strong>精简背诵版：</strong><br>2PL 两阶段：扩展阶段（只加锁不释放）、收缩阶段（只释放不加锁）。保证可串行化。</div>
+            <div class="meta-info"><span>📝 考察题型：简答/论述/判断</span><span>🎯 掌握层级：全文背诵默写</span></div>
+
+            <h3>试述活锁的产生原因和解决方法 <span class="level-badge level-2">★★</span></h3>
+            <div class="content-block"><strong>PPT 核心知识点：</strong><p>活锁原因：事务永远处于等待状态，无法获得所需锁。原因：锁请求调度策略不公平，某些事务请求总是被推迟。解决方法：1.先来先服务 FCFS 策略；2.等待图检测；3.超时机制。</p></div>
+            <div class="short-version"><strong>精简背诵版：</strong><br>原因：调度不公平，事务永远等待。解决：先来先服务、等待图检测、超时机制。</div>
+            <div class="meta-info"><span>📝 考察题型：简答</span><span>🎯 掌握层级：熟读识记</span></div>
+
+            <h3>数据库系统中的常见故障有那些 <span class="level-badge level-2">★★</span></h3>
+            <div class="content-block"><strong>PPT 核心知识点：</strong><p>四类故障：1.事务内部故障（运算溢出、死锁）；2.系统故障（CPU/OS 故障、断电）；3.介质故障（磁盘损坏、磁头碰撞）；4.计算机病毒。</p></div>
+            <div class="short-version"><strong>精简背诵版：</strong><br>四类：事务内部故障、系统故障、介质故障、病毒。</div>
+            <div class="meta-info"><span>📝 考察题型：选择/简答</span><span>🎯 掌握层级：熟读识记</span></div>
+
+            <h3>数据库恢复的基本技术有哪些 <span class="level-badge level-3">★★★</span></h3>
+            <div class="content-block"><strong>PPT 核心知识点：</strong><p>三技术：1.数据转储（静态/动态，海量/增量）；2.登记日志（记录所有更新操作）；3.检查点技术（定期建立检查点减少恢复时间）。恢复策略：事务故障 UNDO；系统故障 REDO 已提交+UNDO 未完成；介质故障转储 + 日志。</p></div>
+            <div class="short-version"><strong>精简背诵版：</strong><br>三技术：数据转储、登记日志、检查点。策略：事务 UNDO、系统 REDO+UNDO、介质转储 + 日志。</div>
+            <div class="meta-info"><span>📝 考察题型：简答/论述</span><span>🎯 掌握层级：全文背诵默写</span></div>
+
+            <h3>数据库镜像 <span class="level-badge level-2">★★</span></h3>
+            <div class="content-block"><strong>PPT 核心知识点：</strong><p>数据库镜像：根据 DBA 要求将整个数据库或关键数据复制到另一个磁盘上。用途：1.介质故障恢复（主磁盘故障自动切换镜像）；2.提高可用性（镜像磁盘可用于并发操作）。DBMS 自动完成，无需应用程序干预。</p></div>
+            <div class="short-version"><strong>精简背诵版：</strong><br>镜像=数据复制到另一磁盘。用途：介质故障恢复、提高可用性。</div>
+            <div class="meta-info"><span>📝 考察题型：选择/简答</span><span>🎯 掌握层级：熟读识记</span></div>
+</div><div class="section" id="chapter5"><h2>第五章 SQL 语言与系统实现</h2>
+            <h3>SQL 基本操作 <span class="level-badge level-3">★★★</span></h3>
+            <div class="content-block"><strong>PPT 核心知识点：</strong><p>SQL 四类操作：1.数据定义 DDL（CREATE、ALTER、DROP）；2.数据查询 DQL（SELECT）；3.数据操纵 DML（INSERT、UPDATE、DELETE）；4.数据控制 DCL（GRANT、REVOKE）。</p></div>
+            <div class="short-version"><strong>精简背诵版：</strong><br>四类：DDL（CREATE/ALTER/DROP）、DQL（SELECT）、DML（INSERT/UPDATE/DELETE）、DCL（GRANT/REVOKE）。</div>
+            <div class="meta-info"><span>📝 考察题型：计算/编程/简答/SQL 编程应用题</span><span>🎯 掌握层级：可独立手写完整 SQL 代码</span></div>
+
+            <h3>授权 <span class="level-badge level-2">★★</span></h3>
+            <div class="content-block"><strong>PPT 核心知识点：</strong><p>GRANT 语法：GRANT 权限 ON 对象 TO 用户 [WITH GRANT OPTION]。常见权限：SELECT、INSERT、UPDATE、DELETE、ALL PRIVILEGES。WITH GRANT OPTION 允许被授权者将权限再授予其他用户。</p></div>
+            <div class="short-version"><strong>精简背诵版：</strong><br>GRANT 权限 ON 对象 TO 用户 [WITH GRANT OPTION]。GRANT OPTION 允许转授。</div>
+            <div class="meta-info"><span>📝 考察题型：编程/选择/SQL 编程应用题</span><span>🎯 掌握层级：可独立手写完整 SQL 代码</span></div>
+
+            <h3>事务控制 <span class="level-badge level-2">★★</span></h3>
+            <div class="content-block"><strong>PPT 核心知识点：</strong><p>事务控制语句：COMMIT（提交永久保存）、ROLLBACK（回滚撤销）、SAVEPOINT（设置保存点）、BEGIN TRANSACTION（开始事务）。</p></div>
+            <div class="short-version"><strong>精简背诵版：</strong><br>COMMIT 提交、ROLLBACK 回滚、SAVEPOINT 保存点、BEGIN 开始。</div>
+            <div class="meta-info"><span>📝 考察题型：编程/选择/SQL 编程应用题</span><span>🎯 掌握层级：可独立手写完整 SQL 代码</span></div>
+
+            <h3>表结构修改 <span class="level-badge level-1">★</span></h3>
+            <div class="content-block"><strong>PPT 核心知识点：</strong><p>ALTER TABLE 语句：ADD（加列）、DROP（删列）、ALTER COLUMN（改列类型）。</p></div>
+            <div class="short-version"><strong>精简背诵版：</strong><br>ALTER TABLE：ADD 加列、DROP 删列、ALTER COLUMN 改类型。</div>
+            <div class="meta-info"><span>📝 考察题型：编程/选择</span><span>🎯 掌握层级：可独立手写完整 SQL 代码</span></div>
+
+            <h3>创建索引 <span class="level-badge level-1">★</span></h3>
+            <div class="content-block"><strong>PPT 核心知识点：</strong><p>CREATE INDEX [UNIQUE] [CLUSTERED] INDEX 名 ON 表 (列 [ASC|DESC])。作用：加速查询、保证唯一性、聚簇索引决定数据存储顺序。</p></div>
+            <div class="short-version"><strong>精简背诵版：</strong><br>CREATE INDEX [UNIQUE] [CLUSTERED]。作用：加速、保唯一、定顺序。</div>
+            <div class="meta-info"><span>📝 考察题型：编程/选择/SQL 编程应用题</span><span>🎯 掌握层级：可独立手写完整 SQL 代码</span></div>
+
+            <h3>创建存储过程 <span class="level-badge level-2">★★</span></h3>
+            <div class="content-block"><strong>PPT 核心知识点：</strong><p>存储过程是为完成特定功能的 SQL 语句集，经编译后存储在数据库中。优点：预先编译执行效率高、可接受参数返回结果、可含流程控制、减少网络传输、增强安全性。语法：CREATE PROCEDURE 名 [(参数)] AS SQL 语句块。调用：EXECUTE 过程名 [参数]。</p></div>
+            <div class="short-version"><strong>精简背诵版：</strong><br>存储过程=编译存储的 SQL 语句集。优点：高效、可传参、含流程、减传输、安全。</div>
+            <div class="meta-info"><span>📝 考察题型：编程/简答/SQL 编程应用题</span><span>🎯 掌握层级：可独立手写完整 SQL 代码</span></div>
+
+            <h3>查询优化的一般步骤 <span class="level-badge level-2">★★</span></h3>
+            <div class="content-block"><strong>PPT 核心知识点：</strong><p>查询优化六步：1.语法分析；2.语义检查；3.视图消解；4.代数优化（选择投影下推）；5.物理优化（选存取路径）；6.生成执行计划（选最小代价）。</p></div>
+            <div class="short-version"><strong>精简背诵版：</strong><br>六步：语法分析、语义检查、视图消解、代数优化、物理优化、生成执行计划。</div>
+            <div class="meta-info"><span>📝 考察题型：简答/论述</span><span>🎯 掌握层级：熟读识记</span></div>
+</div><div class="section" id="chapter6"><h2>第六章 数据仓库与 OLAP</h2>
+            <h3>数据仓库与 OLAP <span class="level-badge level-1">★</span></h3>
+            <div class="content-block"><strong>PPT 核心知识点：</strong><p>数据仓库四特点：面向主题、集成、相对稳定、反映历史变化。OLAP 联机分析处理：支持复杂分析操作、多维数据分析、快速响应。</p></div>
+            <div class="short-version"><strong>精简背诵版：</strong><br>数仓四特点：面向主题、集成、稳定、反映历史。OLAP=多维分析快速响应。</div>
+            <div class="meta-info"><span>📝 考察题型：选择/简答/数仓建模设计题</span><span>🎯 掌握层级：可独立书写全套证明步骤</span></div>
+</div><div class="section" id="sql-questions"><h2>SQL 编程应用题专项训练</h2><h3>学生选课数据库 SQL 综合应用</h3><div class="content-block"><p>表结构：学生表 S(S#, SNAME, SEX, AGE, DEPT)、课程表 C(C#, CNAME, TEACHER, CREDIT)、选课表 SC(S#, C#, GRADE)</p></div><div class="question-block"><strong>1. 查询选修了课程号为 C01 的学生的学号和姓名，并按成绩降序排序（4 分）</strong><div class="sql-block">====SQL 完整代码====
+SELECT S.S#, S.SNAME, SC.GRADE
+FROM S, SC
+WHERE S.S# = SC.S# AND SC.C# = 'C01'
+ORDER BY SC.GRADE DESC;
+====SQL 完整代码====</div></div><div class="question-block"><strong>2. 查询每门课程的平均成绩，并按平均成绩从高到低排序（4 分）</strong><div class="sql-block">====SQL 完整代码====
+SELECT C#, AVG(GRADE) AS AVG_GRADE
+FROM SC
+GROUP BY C#
+ORDER BY AVG_GRADE DESC;
+====SQL 完整代码====</div></div><div class="question-block"><strong>3. 查询选修了 3 门以上课程的学生学号（4 分）</strong><div class="sql-block">====SQL 完整代码====
+SELECT S#
+FROM SC
+GROUP BY S#
+HAVING COUNT(*) > 3;
+====SQL 完整代码====</div></div><div class="question-block"><strong>4. 查询没有选修张老师所授课程的学生姓名（4 分）</strong><div class="sql-block">====SQL 完整代码====
+SELECT SNAME
+FROM S
+WHERE S# NOT IN (
+    SELECT DISTINCT S#
+    FROM SC, C
+    WHERE SC.C# = C.C# AND C.TEACHER = '张老师'
+);
+====SQL 完整代码====</div></div><div class="question-block"><strong>5. 创建视图显示每个学生的选课门数和平均成绩（4 分）</strong><div class="sql-block">====SQL 完整代码====
+CREATE VIEW STUDENT_STATS AS
+SELECT S#, COUNT(*) AS COURSE_COUNT, AVG(GRADE) AS AVG_GRADE
+FROM SC
+GROUP BY S#;
+====SQL 完整代码====</div></div><div class="question-block"><strong>6. 将选修了 C01 课程的所有学生成绩提高 5 分（4 分）</strong><div class="sql-block">====SQL 完整代码====
+UPDATE SC
+SET GRADE = GRADE + 5
+WHERE C# = 'C01';
+====SQL 完整代码====</div></div><div class="question-block"><strong>7. 查询所有学生的选课情况，包括未选课的学生（左外连接）（4 分）</strong><div class="sql-block">====SQL 完整代码====
+SELECT S.S#, S.SNAME, SC.C#, SC.GRADE
+FROM S LEFT JOIN SC ON S.S# = SC.S#;
+====SQL 完整代码====</div></div><div class="question-block"><strong>8. 删除选课表中学号为 S01 的所有选课记录（4 分）</strong><div class="sql-block">====SQL 完整代码====
+DELETE FROM SC
+WHERE S# = 'S01';
+====SQL 完整代码====</div></div><div class="question-block"><strong>9. 查询每个学生选修的课程名和成绩（4 分）</strong><div class="sql-block">====SQL 完整代码====
+SELECT S.SNAME, C.CNAME, SC.GRADE
+FROM S, C, SC
+WHERE S.S# = SC.S# AND SC.C# = C.C#;
+====SQL 完整代码====</div></div><div class="question-block"><strong>10. 查询年龄大于 20 岁的男学生学号和姓名（4 分）</strong><div class="sql-block">====SQL 完整代码====
+SELECT S#, SNAME
+FROM S
+WHERE AGE > 20 AND SEX = '男';
+====SQL 完整代码====</div></div></div><div class="section" id="normalization"><h2>函数依赖范式证明题专项训练</h2><div class="question-block"><strong>1. 已知关系模式 R(A,B,C,D)，函数依赖集 F={A→B, B→C, C→D}，证明 R 最高为几范式，并说明理由（6 分）</strong><div class="answer-block">证明：1.求候选码：A 未出现在任何 FD 右边，A 必在候选码中。A+ = ABCD（通过 A→B, B→C, C→D 传递推导），因此 A 是唯一候选码。2.判断范式：满足 1NF（假设属性原子）；满足 2NF（非主属性 B,C,D 对码 A 无部分依赖，A 是单属性码）；不满足 3NF（存在传递依赖 A→B→C→D，非主属性 C,D 对码 A 传递依赖）。结论：R 最高为 2NF。</div></div><div class="question-block"><strong>2. 将上述 R 分解为 3NF，并证明分解的无损连接性和保持函数依赖（6 分）</strong><div class="answer-block">分解：R1(A,B) 函数依赖 A→B；R2(B,C) 函数依赖 B→C；R3(C,D) 函数依赖 C→D。无损连接性证明：R1∩R2=B，R1-R2=A，B→C 成立，满足无损连接条件；R2∩R3=C，R2-R3=B，C→D 成立，满足无损连接条件。因此分解具有无损连接性。保持函数依赖证明：原 F={A→B, B→C, C→D}，分解后 F1={A→B}, F2={B→C}, F3={C→D}，F1∪F2∪F3=F。因此分解保持函数依赖。结论：分解为 3NF，具有无损连接性和保持函数依赖性。</div></div><div class="question-block"><strong>3. 已知关系模式 R(A,B,C,D,E)，函数依赖集 F={A→BC, CD→E, B→D, E→A}，求 R 的所有候选码，并判断 R 属于第几范式（8 分）</strong><div class="answer-block">求解候选码：L 类属性（只在左边）：C；R 类属性（只在右边）：无；LR 类属性（两边都有）：A,B,D,E。从 C 开始尝试：C+=C（不足）；CA+=ABCDE（通过 A→BC, B→D, CD→E），因此 CA 是候选码；CB+=ABCDE，因此 CB 是候选码；CE+=ABCDE，因此 CE 是候选码。候选码：CA, CB, CE。范式判断：主属性 A,B,C,E，非主属性 D。B→D，B 不是候选码，存在非主属性对非候选码的依赖，因此不满足 3NF，最高为 2NF。</div></div></div><div class="section" id="er-design"><h2>E-R 图转换关系模型设计题专项训练</h2><div class="question-block"><strong>1. 某学校教学管理 E-R 图包含实体：学生（学号，姓名，性别，年龄）、课程（课号，课名，学分）、教师（工号，姓名，职称）。学生与课程之间是 m:n 选课联系（成绩），教师与课程之间是 1:n 授课联系。请将 E-R 图转换为关系模型，写出所有关系模式，并标注主码和外码。（8 分）</strong><div class="answer-block">转换结果：学生（学号，姓名，性别，年龄）主码：学号；课程（课号，课名，学分）主码：课号；教师（工号，姓名，职称）主码：工号；选课（学号，课号，成绩）主码：（学号，课号），外码：学号→学生，课号→课程；授课（课号，工号）主码：课号，外码：工号→教师。说明：m:n 联系转换为独立关系，码为两端实体码组合；1:n 联系与 n 端（课程）合并。</div></div></div><div class="section" id="concurrency"><h2>并发控制与封锁协议分析题专项训练</h2><div class="question-block"><strong>1. 设有两个事务 T1 和 T2，其并发执行如下：T1 读 A=100，T2 读 A=100，T1 将 A 改为 200 并提交，T2 将 A 改为 300 并提交。问：这属于哪类数据不一致问题？用三级封锁协议如何避免？（6 分）</strong><div class="answer-block">这属于丢失修改问题（T1 的修改被 T2 覆盖丢失）。用一级封锁协议即可避免：T1 修改 A 前加 X 锁，T2 修改 A 前也要加 X 锁，但 A 已被 T1 加锁，T2 必须等待 T1 释放锁后才能加锁，从而避免丢失修改。</div></div><div class="question-block"><strong>2. 什么是活锁？什么是死锁？分别给出一种预防和解决方法。（6 分）</strong><div class="answer-block">活锁：事务永远处于等待状态，无法获得所需锁。原因：锁请求调度策略不公平。解决：先来先服务 FCFS 策略。死锁：两个或多个事务互相等待对方释放锁，形成循环等待。预防：一次封锁法（一次将所有要使用数据全部加锁）或顺序封锁法（预先规定封锁顺序）。解除：等待图检测死锁，选择牺牲者事务撤销。</div></div></div><div class="section" id="recovery"><h2>数据库恢复技术大题专项训练</h2><div class="question-block"><strong>1. 简述数据库恢复的基本技术，并说明各类故障的恢复策略。（6 分）</strong><div class="answer-block">恢复三技术：1.数据转储（静态/动态，海量/增量）；2.登记日志（记录所有更新操作）；3.检查点技术（定期建立检查点减少恢复时间）。恢复策略：事务故障→UNDO 未完成事务；系统故障→REDO 已提交事务+UNDO 未完成事务；介质故障→转储 + 日志恢复（先装入转储副本，再重做已提交事务）。</div></div><div class="question-block"><strong>2. 使用检查点方法进行数据库恢复的步骤是什么？为什么要设立检查点？（6 分）</strong><div class="answer-block">检查点恢复步骤：1.建立检查点（缓冲区已修改数据写回磁盘，日志记录检查点）；2.故障后从最后检查点扫描日志；3.重做 REDO 检查点后已提交事务；4.撤销 UNDO 检查点后未完成事务；5.恢复到一致状态。设立检查点的原因：减少恢复时间，不必从头扫描日志，只需从最后检查点开始扫描。</div></div></div><div class="section" id="warehouse"><h2>数据仓库维度建模设计题专项训练</h2><h3>数据仓库维度建模设计题</h3><div class="question-block"><strong>1. 某超市销售业务，需要建立数据仓库进行分析。请设计销售主题的事实表和维度表，写出表结构。（8 分）</strong><div class="answer-block">事实表：销售事实表 SALES_FACT(日期键 DATE_KEY, 商品键 PRODUCT_KEY, 门店键 STORE_KEY, 顾客键 CUSTOMER_KEY, 销售数量 QUANTITY, 销售金额 AMOUNT, 成本 COST)。维度表：1.日期维度 DATE_DIM(DATE_KEY, 年，季度，月，日，星期，是否节假日)；2.商品维度 PRODUCT_DIM(PRODUCT_KEY, 商品 ID, 商品名称，类别，品牌，单价)；3.门店维度 STORE_DIM(STORE_KEY, 门店 ID, 门店名称，地区，城市，面积)；4.顾客维度 CUSTOMER_DIM(CUSTOMER_KEY, 顾客 ID, 姓名，性别，年龄段，会员等级)。</div></div><div class="question-block"><strong>2. 说明数据仓库与传统数据库的区别。（6 分）</strong><div class="answer-block">区别：1.面向主题 vs 面向应用：数仓按主题组织，传统 DB 按应用需求；2.集成性：数仓集成多源数据消除不一致，传统 DB 数据来源单一；3.稳定性：数仓数据进入后一般不更新只查询，传统 DB 频繁增删改；4.时变性：数仓记录历史数据反映变化，传统 DB 反映当前状态；5.数据粒度：数仓可有多层粒度汇总，传统 DB 一般是详细数据；6.用户群体：数仓面向决策分析人员，传统 DB 面向业务操作人员。</div></div></div><div class="section" id="fill-in"><h2>填空/补全题专项训练</h2><div class="question-block"><strong>1. 数据模型由______、______和______三部分组成</strong><div class="answer-block">答案：数据结构、数据操作、完整性约束</div></div><div class="question-block"><strong>2. 数据库系统的三级模式结构包括______、______和______</strong><div class="answer-block">答案：外模式、模式、内模式</div></div><div class="question-block"><strong>3. 事务的 ACID 特性分别指______、______、______、______</strong><div class="answer-block">答案：原子性、一致性、隔离性、持久性</div></div><div class="question-block"><strong>4. 并发操作可能产生的三类数据不一致是______、______、______</strong><div class="answer-block">答案：丢失修改、不可重复读、读脏数据</div></div><div class="question-block"><strong>5. 关系代数五种基本运算是______、______、______、______、______</strong><div class="answer-block">答案：并、差、选择、投影、笛卡尔积</div></div><div class="question-block"><strong>6. 数据库设计六个阶段是______、______、______、______、______、______</strong><div class="answer-block">答案：需求分析、概念设计、逻辑设计、物理设计、数据库实施、运行维护</div></div><div class="question-block"><strong>7. 1NF 要求属性______，2NF 消除______，3NF 消除______，BCNF 消除______</strong><div class="answer-block">答案：不可再分、非主属性对码的部分依赖、非主属性对码的传递依赖、主属性对码的部分和传递依赖</div></div><div class="question-block"><strong>8. 数据库恢复的基本技术有______、______、______</strong><div class="answer-block">答案：数据转储、登记日志、检查点技术</div></div><div class="question-block"><strong>9. 两段锁协议的两个阶段是______和______</strong><div class="answer-block">答案：扩展阶段（只加锁不释放）、收缩阶段（只释放不加锁）</div></div><div class="question-block"><strong>10. E-R 图中矩形表示______，椭圆表示______，菱形表示______</strong><div class="answer-block">答案：实体、属性、联系</div></div><div class="question-block"><strong>11. SQL 语言四类操作是______、______、______、______</strong><div class="answer-block">答案：DDL、DQL、DML、DCL</div></div><div class="question-block"><strong>12. 数据库管理系统的主要功能包括______、______、______、______、______、______</strong><div class="answer-block">答案：定义创建、组织存储、数据存取、事务运行管理、建立维护、其他功能</div></div><div class="question-block"><strong>13. 数据独立性分为______和______</strong><div class="answer-block">答案：物理独立性、逻辑独立性</div></div><div class="question-block"><strong>14. 日志文件记录的内容包括______、______、______</strong><div class="answer-block">答案：事务开始、事务提交/回滚、数据更新操作</div></div><div class="question-block"><strong>15. 数据库系统必须提供的数据控制功能有______、______、______、______</strong><div class="answer-block">答案：安全性、完整性、并发控制、数据库恢复</div></div></div>
+        <div class="part-divider" id="part-b"><h2>分区 B 纯单选选择题题库板块</h2></div>
+        <div class="section">
+            <h2>单选题库</h2>
+            <div class="stats-box">
+                <h4>📊 题库统计说明</h4>
+                <div class="stats-grid">
+                    <div class="stat-item"><div class="num">87</div><div class="label">原始题库总题量</div></div>
+                    <div class="stat-item"><div class="num">0</div><div class="label">重复剔除数量</div></div>
+                    <div class="stat-item"><div class="num">0</div><div class="label">超纲考点剔除</div></div>
+                    <div class="stat-item"><div class="num" style="color:#16a34a">87</div><div class="label">最终入库精选题</div></div>
+                </div>
+                <p style="margin-top:12px; font-size:0.9em; color:var(--text-secondary)">说明：仅删除文本完全一模一样的重复选择题；题干近似、同一考点不同设问、选项顺序不同的题目全部保留。所有题目均经过提纲边界审核。</p>
+            </div>
+
+            <div class="question-block">
+                <strong>1. 数据独立性是指</strong>
+                <p style="margin-left:20px; color:var(--text-secondary)">A.数据之间的相互独立</p><p style="margin-left:20px; color:var(--text-secondary)">B.应用程序与 DB 的结构之间相互独立</p><p style="margin-left:20px; color:var(--text-secondary)">C.数据的逻辑结构与物理结构相互独立</p><p style="margin-left:20px; color:var(--text-secondary)">D.数据与磁盘之间相互独立</p>
+                <div class="answer-block"><strong>答案：C</strong><br><span style="font-size:0.9em">解析：数据独立性指应用程序与数据库结构相互独立。</span></div>
+                <p style="margin-top:8px; font-size:0.85em; color:var(--text-secondary)">📌 归属知识点：数据独立性是什么</p>
+            </div>
+
+            <div class="question-block">
+                <strong>2. 数据库系统与文件系统的主要区别是</strong>
+                <p style="margin-left:20px; color:var(--text-secondary)">A.数据库系统复杂，而文件系统简单</p><p style="margin-left:20px; color:var(--text-secondary)">B.文件系统不能解决数据冗余和数据独立性问题，而数据库系统可以解决</p><p style="margin-left:20px; color:var(--text-secondary)">C.文件系统只能管理程序文件</p><p style="margin-left:20px; color:var(--text-secondary)">D.文件系统管理的数据量较少</p>
+                <div class="answer-block"><strong>答案：B</strong><br><span style="font-size:0.9em">解析：数据库系统解决了文件系统无法解决的数据冗余和数据独立性问题。</span></div>
+                <p style="margin-top:8px; font-size:0.85em; color:var(--text-secondary)">📌 归属知识点：数据库系统的特点</p>
+            </div>
+
+            <div class="question-block">
+                <strong>3. 层次模型不能直接表示</strong>
+                <p style="margin-left:20px; color:var(--text-secondary)">A.1:1 关系</p><p style="margin-left:20px; color:var(--text-secondary)">B.1:m 关系</p><p style="margin-left:20px; color:var(--text-secondary)">C.m:n 关系</p><p style="margin-left:20px; color:var(--text-secondary)">D.1:1 和 1:m 关系</p>
+                <div class="answer-block"><strong>答案：C</strong><br><span style="font-size:0.9em">解析：层次模型只能表示 1:1 和 1:m 关系。</span></div>
+                <p style="margin-top:8px; font-size:0.85em; color:var(--text-secondary)">📌 归属知识点：ER 图如何转换成关系数据模型</p>
+            </div>
+
+            <div class="question-block">
+                <strong>4. 关系模型中的关系模式至少是</strong>
+                <p style="margin-left:20px; color:var(--text-secondary)">A.1NF</p><p style="margin-left:20px; color:var(--text-secondary)">B.2NF</p><p style="margin-left:20px; color:var(--text-secondary)">C.3NF</p><p style="margin-left:20px; color:var(--text-secondary)">D.BCNF</p>
+                <div class="answer-block"><strong>答案：A</strong><br><span style="font-size:0.9em">解析：关系模型要求关系模式至少满足 1NF。</span></div>
+                <p style="margin-top:8px; font-size:0.85em; color:var(--text-secondary)">📌 归属知识点：1NF, 2NF, 3NF, BCNF</p>
+            </div>
+
+            <div class="question-block">
+                <strong>5. 从 E-R 模型向关系模型转换时，M:N 联系转换为关系模式的关键字是</strong>
+                <p style="margin-left:20px; color:var(--text-secondary)">A.M 端实体的关键字</p><p style="margin-left:20px; color:var(--text-secondary)">B.N 端实体的关键字</p><p style="margin-left:20px; color:var(--text-secondary)">C.M 端与 N 端实体关键字组合</p><p style="margin-left:20px; color:var(--text-secondary)">D.重新选取其他属性</p>
+                <div class="answer-block"><strong>答案：C</strong><br><span style="font-size:0.9em">解析：M:N 联系必须转换为独立关系，码由两端实体码组合而成。</span></div>
+                <p style="margin-top:8px; font-size:0.85em; color:var(--text-secondary)">📌 归属知识点：ER 图如何转换成关系数据模型</p>
+            </div>
+
+            <div class="question-block">
+                <strong>6. 解决并发操作带来的数据不一致性问题普遍采用</strong>
+                <p style="margin-left:20px; color:var(--text-secondary)">A.封锁</p><p style="margin-left:20px; color:var(--text-secondary)">B.恢复</p><p style="margin-left:20px; color:var(--text-secondary)">C.存取控制</p><p style="margin-left:20px; color:var(--text-secondary)">D.协商</p>
+                <div class="answer-block"><strong>答案：A</strong><br><span style="font-size:0.9em">解析：封锁技术是解决并发不一致问题的主要方法。</span></div>
+                <p style="margin-top:8px; font-size:0.85em; color:var(--text-secondary)">📌 归属知识点：并发操作可能会产生哪几类数据不一致</p>
+            </div>
+
+            <div class="question-block">
+                <strong>7. 事务的 ACID 特性中，I 代表</strong>
+                <p style="margin-left:20px; color:var(--text-secondary)">A.完整性</p><p style="margin-left:20px; color:var(--text-secondary)">B.隔离性</p><p style="margin-left:20px; color:var(--text-secondary)">C.独立性</p><p style="margin-left:20px; color:var(--text-secondary)">D.持久性</p>
+                <div class="answer-block"><strong>答案：B</strong><br><span style="font-size:0.9em">解析：ACID 分别代表原子性、一致性、隔离性、持久性。</span></div>
+                <p style="margin-top:8px; font-size:0.85em; color:var(--text-secondary)">📌 归属知识点：事务的 ACID 特性</p>
+            </div>
+
+            <div class="question-block">
+                <strong>8. 日志文件的作用是</strong>
+                <p style="margin-left:20px; color:var(--text-secondary)">A.存储数据</p><p style="margin-left:20px; color:var(--text-secondary)">B.记录更新操作</p><p style="margin-left:20px; color:var(--text-secondary)">C.备份数据库</p><p style="margin-left:20px; color:var(--text-secondary)">D.加速查询</p>
+                <div class="answer-block"><strong>答案：B</strong><br><span style="font-size:0.9em">解析：日志文件记录事务对数据库的所有更新操作。</span></div>
+                <p style="margin-top:8px; font-size:0.85em; color:var(--text-secondary)">📌 归属知识点：什么是日志文件？为什么要设立日志文件</p>
+            </div>
+
+            <div class="question-block">
+                <strong>9. 视图是</strong>
+                <p style="margin-left:20px; color:var(--text-secondary)">A.基本表</p><p style="margin-left:20px; color:var(--text-secondary)">B.虚表</p><p style="margin-left:20px; color:var(--text-secondary)">C.索引</p><p style="margin-left:20px; color:var(--text-secondary)">D.存储过程</p>
+                <div class="answer-block"><strong>答案：B</strong><br><span style="font-size:0.9em">解析：视图是从基本表导出的虚表。</span></div>
+                <p style="margin-top:8px; font-size:0.85em; color:var(--text-secondary)">📌 归属知识点：什么叫视图</p>
+            </div>
+
+            <div class="question-block">
+                <strong>10. 数据库设计的第一个阶段是</strong>
+                <p style="margin-left:20px; color:var(--text-secondary)">A.概念设计</p><p style="margin-left:20px; color:var(--text-secondary)">B.逻辑设计</p><p style="margin-left:20px; color:var(--text-secondary)">C.需求分析</p><p style="margin-left:20px; color:var(--text-secondary)">D.物理设计</p>
+                <div class="answer-block"><strong>答案：C</strong><br><span style="font-size:0.9em">解析：数据库设计六步骤：需求分析、概念设计、逻辑设计、物理设计、实施、运行维护。</span></div>
+                <p style="margin-top:8px; font-size:0.85em; color:var(--text-secondary)">📌 归属知识点：数据库设计的主要步骤</p>
+            </div>
+
+            <div class="question-block">
+                <strong>11. 并发操作可能产生的问题不包括</strong>
+                <p style="margin-left:20px; color:var(--text-secondary)">A.丢失修改</p><p style="margin-left:20px; color:var(--text-secondary)">B.不可重复读</p><p style="margin-left:20px; color:var(--text-secondary)">C.读脏数据</p><p style="margin-left:20px; color:var(--text-secondary)">D.死锁</p>
+                <div class="answer-block"><strong>答案：D</strong><br><span style="font-size:0.9em">解析：死锁是并发控制问题，不是数据不一致类型。</span></div>
+                <p style="margin-top:8px; font-size:0.85em; color:var(--text-secondary)">📌 归属知识点：并发操作可能会产生哪几类数据不一致</p>
+            </div>
+
+            <div class="question-block">
+                <strong>12. 两段锁协议保证的是</strong>
+                <p style="margin-left:20px; color:var(--text-secondary)">A.无死锁</p><p style="margin-left:20px; color:var(--text-secondary)">B.可串行化</p><p style="margin-left:20px; color:var(--text-secondary)">C.无活锁</p><p style="margin-left:20px; color:var(--text-secondary)">D.高效率</p>
+                <div class="answer-block"><strong>答案：B</strong><br><span style="font-size:0.9em">解析：两段锁协议保证并发调度可串行化。</span></div>
+                <p style="margin-top:8px; font-size:0.85em; color:var(--text-secondary)">📌 归属知识点：两段锁协议（2PL）</p>
+            </div>
+
+            <div class="question-block">
+                <strong>13. 数据库恢复的基本技术不包括</strong>
+                <p style="margin-left:20px; color:var(--text-secondary)">A.数据转储</p><p style="margin-left:20px; color:var(--text-secondary)">B.登记日志</p><p style="margin-left:20px; color:var(--text-secondary)">C.建立索引</p><p style="margin-left:20px; color:var(--text-secondary)">D.检查点技术</p>
+                <div class="answer-block"><strong>答案：C</strong><br><span style="font-size:0.9em">解析：恢复三技术：数据转储、登记日志、检查点技术。</span></div>
+                <p style="margin-top:8px; font-size:0.85em; color:var(--text-secondary)">📌 归属知识点：数据库恢复的基本技术有哪些</p>
+            </div>
+
+            <div class="question-block">
+                <strong>14. 关系数据库基于的两类运算是</strong>
+                <p style="margin-left:20px; color:var(--text-secondary)">A.代数和几何</p><p style="margin-left:20px; color:var(--text-secondary)">B.关系代数和关系演算</p><p style="margin-left:20px; color:var(--text-secondary)">C.微积分和线性代数</p><p style="margin-left:20px; color:var(--text-secondary)">D.逻辑和集合</p>
+                <div class="answer-block"><strong>答案：B</strong><br><span style="font-size:0.9em">解析：关系数据库基于关系代数和关系演算。</span></div>
+                <p style="margin-top:8px; font-size:0.85em; color:var(--text-secondary)">📌 归属知识点：关系数据库中基于数学上两类运算是关系代数和关系演算</p>
+            </div>
+
+            <div class="question-block">
+                <strong>15. 满足 BCNF 的关系模式一定满足</strong>
+                <p style="margin-left:20px; color:var(--text-secondary)">A.1NF</p><p style="margin-left:20px; color:var(--text-secondary)">B.2NF</p><p style="margin-left:20px; color:var(--text-secondary)">C.3NF</p><p style="margin-left:20px; color:var(--text-secondary)">D.以上都是</p>
+                <div class="answer-block"><strong>答案：D</strong><br><span style="font-size:0.9em">解析：BCNF 是在 3NF 基础上进一步规范化。</span></div>
+                <p style="margin-top:8px; font-size:0.85em; color:var(--text-secondary)">📌 归属知识点：1NF, 2NF, 3NF, BCNF</p>
+            </div>
+
+            <div class="question-block">
+                <strong>16. 数据库系统的核心是</strong>
+                <p style="margin-left:20px; color:var(--text-secondary)">A.数据库</p><p style="margin-left:20px; color:var(--text-secondary)">B.数据库管理系统</p><p style="margin-left:20px; color:var(--text-secondary)">C.数据模型</p><p style="margin-left:20px; color:var(--text-secondary)">D.软件工具</p>
+                <div class="answer-block"><strong>答案：B</strong><br><span style="font-size:0.9em">解析：DBMS 是数据库系统的核心软件。</span></div>
+                <p style="margin-top:8px; font-size:0.85em; color:var(--text-secondary)">📌 归属知识点：DB, DBMS 和 DBS 三者间的关系</p>
+            </div>
+
+            <div class="question-block">
+                <strong>17. 数据模型的三要素不包括</strong>
+                <p style="margin-left:20px; color:var(--text-secondary)">A.数据结构</p><p style="margin-left:20px; color:var(--text-secondary)">B.数据操作</p><p style="margin-left:20px; color:var(--text-secondary)">C.数据查询</p><p style="margin-left:20px; color:var(--text-secondary)">D.完整性约束</p>
+                <div class="answer-block"><strong>答案：C</strong><br><span style="font-size:0.9em">解析：数据模型三要素：数据结构、数据操作、完整性约束。</span></div>
+                <p style="margin-top:8px; font-size:0.85em; color:var(--text-secondary)">📌 归属知识点：数据模型的组成</p>
+            </div>
+
+            <div class="question-block">
+                <strong>18. 五种基本关系运算包括</strong>
+                <p style="margin-left:20px; color:var(--text-secondary)">A.并差选择投影连接</p><p style="margin-left:20px; color:var(--text-secondary)">B.并差选择投影笛卡尔积</p><p style="margin-left:20px; color:var(--text-secondary)">C.并交选择投影笛卡尔积</p><p style="margin-left:20px; color:var(--text-secondary)">D.并差选择投影自然连接</p>
+                <div class="answer-block"><strong>答案：B</strong><br><span style="font-size:0.9em">解析：五种基本运算：并、差、选择、投影、笛卡尔积。</span></div>
+                <p style="margin-top:8px; font-size:0.85em; color:var(--text-secondary)">📌 归属知识点：常用的关系运算</p>
+            </div>
+
+            <div class="question-block">
+                <strong>19. 二元关系模式最高范式必定是</strong>
+                <p style="margin-left:20px; color:var(--text-secondary)">A.BCNF</p><p style="margin-left:20px; color:var(--text-secondary)">B.3NF</p><p style="margin-left:20px; color:var(--text-secondary)">C.4NF</p><p style="margin-left:20px; color:var(--text-secondary)">D.5NF</p>
+                <div class="answer-block"><strong>答案：A</strong><br><span style="font-size:0.9em">解析：只有两个属性的关系模式一定满足 BCNF。</span></div>
+                <p style="margin-top:8px; font-size:0.85em; color:var(--text-secondary)">📌 归属知识点：1NF, 2NF, 3NF, BCNF</p>
+            </div>
+
+            <div class="question-block">
+                <strong>20. 数据库完整性是指数据的</strong>
+                <p style="margin-left:20px; color:var(--text-secondary)">A.安全性</p><p style="margin-left:20px; color:var(--text-secondary)">B.正确性和相容性</p><p style="margin-left:20px; color:var(--text-secondary)">C.一致性</p><p style="margin-left:20px; color:var(--text-secondary)">D.可靠性</p>
+                <div class="answer-block"><strong>答案：B</strong><br><span style="font-size:0.9em">解析：数据库完整性指数据的正确性和相容性。</span></div>
+                <p style="margin-top:8px; font-size:0.85em; color:var(--text-secondary)">📌 归属知识点：数据库的完整性</p>
+            </div>
+
+            <div class="question-block">
+                <strong>21. DBMS 存取控制机制主要包括</strong>
+                <p style="margin-left:20px; color:var(--text-secondary)">A.用户标识和鉴定</p><p style="margin-left:20px; color:var(--text-secondary)">B.存取权限定义</p><p style="margin-left:20px; color:var(--text-secondary)">C.存取权限检查</p><p style="margin-left:20px; color:var(--text-secondary)">D.以上都是</p>
+                <div class="answer-block"><strong>答案：D</strong><br><span style="font-size:0.9em">解析：存取控制包括用户鉴定、权限定义、权限检查等。</span></div>
+                <p style="margin-top:8px; font-size:0.85em; color:var(--text-secondary)">📌 归属知识点：DBMS 存取控制机制主要包括</p>
+            </div>
+
+            <div class="question-block">
+                <strong>22. 自然连接要求 R 和 S 含有一个或多个共有的</strong>
+                <p style="margin-left:20px; color:var(--text-secondary)">A.元组</p><p style="margin-left:20px; color:var(--text-secondary)">B.行</p><p style="margin-left:20px; color:var(--text-secondary)">C.记录</p><p style="margin-left:20px; color:var(--text-secondary)">D.属性</p>
+                <div class="answer-block"><strong>答案：D</strong><br><span style="font-size:0.9em">解析：自然连接要求两关系有公共属性。</span></div>
+                <p style="margin-top:8px; font-size:0.85em; color:var(--text-secondary)">📌 归属知识点：常用的关系运算</p>
+            </div>
+
+            <div class="question-block">
+                <strong>23. 关系规范化是为解决什么问题而引入的</strong>
+                <p style="margin-left:20px; color:var(--text-secondary)">A.插入、删除和数据冗余</p><p style="margin-left:20px; color:var(--text-secondary)">B.提高查询速度</p><p style="margin-left:20px; color:var(--text-secondary)">C.减少数据操作的复杂性</p><p style="margin-left:20px; color:var(--text-secondary)">D.保证数据的安全性和完整性</p>
+                <div class="answer-block"><strong>答案：A</strong><br><span style="font-size:0.9em">解析：规范化主要解决插入异常、删除异常和数据冗余问题。</span></div>
+                <p style="margin-top:8px; font-size:0.85em; color:var(--text-secondary)">📌 归属知识点：1NF, 2NF, 3NF, BCNF</p>
+            </div>
+
+            <div class="question-block">
+                <strong>24. 在数据库的概念设计中，最常用的数据模型是</strong>
+                <p style="margin-left:20px; color:var(--text-secondary)">A.形象模型</p><p style="margin-left:20px; color:var(--text-secondary)">B.物理模型</p><p style="margin-left:20px; color:var(--text-secondary)">C.逻辑模型</p><p style="margin-left:20px; color:var(--text-secondary)">D.实体联系模型</p>
+                <div class="answer-block"><strong>答案：D</strong><br><span style="font-size:0.9em">解析：概念设计阶段最常用 E-R 模型。</span></div>
+                <p style="margin-top:8px; font-size:0.85em; color:var(--text-secondary)">📌 归属知识点：概念模型及其特点</p>
+            </div>
+
+            <div class="question-block">
+                <strong>25. 事务的一致性是指</strong>
+                <p style="margin-left:20px; color:var(--text-secondary)">A.事务中包括的所有操作要么都做，要么都不做</p><p style="margin-left:20px; color:var(--text-secondary)">B.事务一旦提交，对数据库的改变是永久的</p><p style="margin-left:20px; color:var(--text-secondary)">C.一个事务内部的操作及使用的数据对并发的其他事务是隔离的</p><p style="margin-left:20px; color:var(--text-secondary)">D.事务必须是使数据库从一个一致性状态变到另一个一致性状态</p>
+                <div class="answer-block"><strong>答案：D</strong><br><span style="font-size:0.9em">解析：一致性指事务执行前后数据库都处于一致性状态。</span></div>
+                <p style="margin-top:8px; font-size:0.85em; color:var(--text-secondary)">📌 归属知识点：事务的 ACID 特性</p>
+            </div>
+
+            <div class="question-block">
+                <strong>26. E-R 图中的联系可以与几个实体有关</strong>
+                <p style="margin-left:20px; color:var(--text-secondary)">A.0 个</p><p style="margin-left:20px; color:var(--text-secondary)">B.1 个</p><p style="margin-left:20px; color:var(--text-secondary)">C.1 个或多个</p><p style="margin-left:20px; color:var(--text-secondary)">D.多个</p>
+                <div class="answer-block"><strong>答案：C</strong><br><span style="font-size:0.9em">解析：联系可以与 1 个或多个实体有关。</span></div>
+                <p style="margin-top:8px; font-size:0.85em; color:var(--text-secondary)">📌 归属知识点：在 E-R 模型的图形表示</p>
+            </div>
+
+            <div class="question-block">
+                <strong>27. 数据库中的封锁机制是什么的主要方法</strong>
+                <p style="margin-left:20px; color:var(--text-secondary)">A.完整性</p><p style="margin-left:20px; color:var(--text-secondary)">B.安全性</p><p style="margin-left:20px; color:var(--text-secondary)">C.并发控制</p><p style="margin-left:20px; color:var(--text-secondary)">D.恢复</p>
+                <div class="answer-block"><strong>答案：C</strong><br><span style="font-size:0.9em">解析：封锁机制是并发控制的主要方法。</span></div>
+                <p style="margin-top:8px; font-size:0.85em; color:var(--text-secondary)">📌 归属知识点：并发操作可能会产生哪几类数据不一致</p>
+            </div>
+
+            <div class="question-block">
+                <strong>28. 在关系模式中，如果属性 A 和 B 存在 1 对 1 的联系，则说</strong>
+                <p style="margin-left:20px; color:var(--text-secondary)">A.A→B</p><p style="margin-left:20px; color:var(--text-secondary)">B.B→A</p><p style="margin-left:20px; color:var(--text-secondary)">C.A←→B</p><p style="margin-left:20px; color:var(--text-secondary)">D.以上都不是</p>
+                <div class="answer-block"><strong>答案：C</strong><br><span style="font-size:0.9em">解析：1 对 1 联系表示 A 和 B 相互函数依赖。</span></div>
+                <p style="margin-top:8px; font-size:0.85em; color:var(--text-secondary)">📌 归属知识点：常用的关系运算</p>
+            </div>
+
+            <div class="question-block">
+                <strong>29. 概念模型独立于</strong>
+                <p style="margin-left:20px; color:var(--text-secondary)">A.E-R 模型</p><p style="margin-left:20px; color:var(--text-secondary)">B.硬件设备和 DBMS</p><p style="margin-left:20px; color:var(--text-secondary)">C.操作系统和 DBMS</p><p style="margin-left:20px; color:var(--text-secondary)">D.DBMS</p>
+                <div class="answer-block"><strong>答案：B</strong><br><span style="font-size:0.9em">解析：概念模型独立于具体的机器和 DBMS。</span></div>
+                <p style="margin-top:8px; font-size:0.85em; color:var(--text-secondary)">📌 归属知识点：概念模型及其特点</p>
+            </div>
+
+            <div class="question-block">
+                <strong>30. 关于死锁，下列说法中正确的是</strong>
+                <p style="margin-left:20px; color:var(--text-secondary)">A.死锁是操作系统中的问题</p><p style="margin-left:20px; color:var(--text-secondary)">B.在数据库操作中防止死锁的方法是禁止两个用户同时操作数据库</p><p style="margin-left:20px; color:var(--text-secondary)">C.当两个用户竞争相同资源时不会发生死锁</p><p style="margin-left:20px; color:var(--text-secondary)">D.只有出现并发操作时，才有可能出现死锁</p>
+                <div class="answer-block"><strong>答案：D</strong><br><span style="font-size:0.9em">解析：死锁是并发操作时可能出现的现象。</span></div>
+                <p style="margin-top:8px; font-size:0.85em; color:var(--text-secondary)">📌 归属知识点：两段锁协议（2PL）</p>
+            </div>
+
+            <div class="question-block">
+                <strong>31. 数据库的三级模式结构中，描述数据库中全体数据的全局逻辑结构和特征的是</strong>
+                <p style="margin-left:20px; color:var(--text-secondary)">A.外模式</p><p style="margin-left:20px; color:var(--text-secondary)">B.内模式</p><p style="margin-left:20px; color:var(--text-secondary)">C.模式</p><p style="margin-left:20px; color:var(--text-secondary)">D.存储模式</p>
+                <div class="answer-block"><strong>答案：C</strong><br><span style="font-size:0.9em">解析：模式描述数据库中全体数据的全局逻辑结构和特征。</span></div>
+                <p style="margin-top:8px; font-size:0.85em; color:var(--text-secondary)">📌 归属知识点：DB, DBMS 和 DBS 三者间的关系</p>
+            </div>
+
+            <div class="question-block">
+                <strong>32. SQL 语言中，实现数据检索的语句是</strong>
+                <p style="margin-left:20px; color:var(--text-secondary)">A.SELECT</p><p style="margin-left:20px; color:var(--text-secondary)">B.INSERT</p><p style="margin-left:20px; color:var(--text-secondary)">C.UPDATE</p><p style="margin-left:20px; color:var(--text-secondary)">D.DELETE</p>
+                <div class="answer-block"><strong>答案：A</strong><br><span style="font-size:0.9em">解析：SELECT 语句用于数据检索。</span></div>
+                <p style="margin-top:8px; font-size:0.85em; color:var(--text-secondary)">📌 归属知识点：SQL 基本操作</p>
+            </div>
+
+            <div class="question-block">
+                <strong>33. 关系数据库中基于数学上的两类运算是</strong>
+                <p style="margin-left:20px; color:var(--text-secondary)">A.关系代数和关系演算</p><p style="margin-left:20px; color:var(--text-secondary)">B.集合论和图论</p><p style="margin-left:20px; color:var(--text-secondary)">C.微积分和线性代数</p><p style="margin-left:20px; color:var(--text-secondary)">D.概率论和数理统计</p>
+                <div class="answer-block"><strong>答案：A</strong><br><span style="font-size:0.9em">解析：关系数据库基于关系代数和关系演算。</span></div>
+                <p style="margin-top:8px; font-size:0.85em; color:var(--text-secondary)">📌 归属知识点：关系数据库中基于数学上两类运算是关系代数和关系演算</p>
+            </div>
+
+            <div class="question-block">
+                <strong>34. 数据库管理系统能实现对数据库中数据的查询、插入、修改和删除等操作，这种功能称为</strong>
+                <p style="margin-left:20px; color:var(--text-secondary)">A.数据定义功能</p><p style="margin-left:20px; color:var(--text-secondary)">B.数据管理功能</p><p style="margin-left:20px; color:var(--text-secondary)">C.数据操纵功能</p><p style="margin-left:20px; color:var(--text-secondary)">D.数据控制功能</p>
+                <div class="answer-block"><strong>答案：C</strong><br><span style="font-size:0.9em">解析：查询、插入、修改、删除属于数据操纵功能。</span></div>
+                <p style="margin-top:8px; font-size:0.85em; color:var(--text-secondary)">📌 归属知识点：数据库管理系统的主要功能</p>
+            </div>
+
+            <div class="question-block">
+                <strong>35. 在数据库中存储的是</strong>
+                <p style="margin-left:20px; color:var(--text-secondary)">A.数据</p><p style="margin-left:20px; color:var(--text-secondary)">B.数据模型</p><p style="margin-left:20px; color:var(--text-secondary)">C.数据以及数据之间的联系</p><p style="margin-left:20px; color:var(--text-secondary)">D.信息</p>
+                <div class="answer-block"><strong>答案：C</strong><br><span style="font-size:0.9em">解析：数据库存储数据以及数据之间的联系。</span></div>
+                <p style="margin-top:8px; font-size:0.85em; color:var(--text-secondary)">📌 归属知识点：DB, DBMS 和 DBS 三者间的关系</p>
+            </div>
+
+            <div class="question-block">
+                <strong>36. 数据库中，数据的物理独立性是指</strong>
+                <p style="margin-left:20px; color:var(--text-secondary)">A.数据库与数据库管理系统的相互独立</p><p style="margin-left:20px; color:var(--text-secondary)">B.用户程序与 DBMS 的相互独立</p><p style="margin-left:20px; color:var(--text-secondary)">C.用户的应用程序与存储在磁盘上数据库中的数据是相互独立的</p><p style="margin-left:20px; color:var(--text-secondary)">D.应用程序与数据库中数据的逻辑结构相互独立</p>
+                <div class="answer-block"><strong>答案：C</strong><br><span style="font-size:0.9em">解析：物理独立性指应用程序与磁盘存储数据相互独立。</span></div>
+                <p style="margin-top:8px; font-size:0.85em; color:var(--text-secondary)">📌 归属知识点：数据独立性是什么</p>
+            </div>
+
+            <div class="question-block">
+                <strong>37. 关系数据模型</strong>
+                <p style="margin-left:20px; color:var(--text-secondary)">A.只能表示实体间的 1:1 联系</p><p style="margin-left:20px; color:var(--text-secondary)">B.只能表示实体间的 1:n 联系</p><p style="margin-left:20px; color:var(--text-secondary)">C.只能表示实体间的 m:n 联系</p><p style="margin-left:20px; color:var(--text-secondary)">D.可以表示实体间的上述三种联系</p>
+                <div class="answer-block"><strong>答案：D</strong><br><span style="font-size:0.9em">解析：关系数据模型可以表示 1:1、1:n、m:n 三种联系。</span></div>
+                <p style="margin-top:8px; font-size:0.85em; color:var(--text-secondary)">📌 归属知识点：常用的关系运算</p>
+            </div>
+
+            <div class="question-block">
+                <strong>38. 关系运算中花费时间可能最长的运算是</strong>
+                <p style="margin-left:20px; color:var(--text-secondary)">A.投影</p><p style="margin-left:20px; color:var(--text-secondary)">B.选择</p><p style="margin-left:20px; color:var(--text-secondary)">C.笛卡尔积</p><p style="margin-left:20px; color:var(--text-secondary)">D.除</p>
+                <div class="answer-block"><strong>答案：C</strong><br><span style="font-size:0.9em">解析：笛卡尔积运算会产生大量元组。</span></div>
+                <p style="margin-top:8px; font-size:0.85em; color:var(--text-secondary)">📌 归属知识点：常用的关系运算</p>
+            </div>
+
+            <div class="question-block">
+                <strong>39. 在关系 DB 中，任何二元关系模式的最高范式必定是</strong>
+                <p style="margin-left:20px; color:var(--text-secondary)">A.BCNF</p><p style="margin-left:20px; color:var(--text-secondary)">B.3NF</p><p style="margin-left:20px; color:var(--text-secondary)">C.4NF</p><p style="margin-left:20px; color:var(--text-secondary)">D.5NF</p>
+                <div class="answer-block"><strong>答案：A</strong><br><span style="font-size:0.9em">解析：二元关系模式一定满足 BCNF。</span></div>
+                <p style="margin-top:8px; font-size:0.85em; color:var(--text-secondary)">📌 归属知识点：1NF, 2NF, 3NF, BCNF</p>
+            </div>
+
+            <div class="question-block">
+                <strong>40. 当局部 E-R 图合并成全局 E-R 图时可能出现冲突，不属于合并冲突的是</strong>
+                <p style="margin-left:20px; color:var(--text-secondary)">A.属性冲突</p><p style="margin-left:20px; color:var(--text-secondary)">B.语法冲突</p><p style="margin-left:20px; color:var(--text-secondary)">C.结构冲突</p><p style="margin-left:20px; color:var(--text-secondary)">D.命名冲突</p>
+                <div class="answer-block"><strong>答案：B</strong><br><span style="font-size:0.9em">解析：E-R 图合并冲突包括属性冲突、命名冲突、结构冲突。</span></div>
+                <p style="margin-top:8px; font-size:0.85em; color:var(--text-secondary)">📌 归属知识点：合并 E-R 图过程中，通常存在哪些冲突</p>
+            </div>
+
+            <div class="question-block">
+                <strong>41. 若事务 T 对数据 R 已加 X 锁，则其他事务对数据 R</strong>
+                <p style="margin-left:20px; color:var(--text-secondary)">A.可以加 S 锁不能加 X 锁</p><p style="margin-left:20px; color:var(--text-secondary)">B.不能加 S 锁可以加 X 锁</p><p style="margin-left:20px; color:var(--text-secondary)">C.可以加 S 锁也可以加 X 锁</p><p style="margin-left:20px; color:var(--text-secondary)">D.不能加任何锁</p>
+                <div class="answer-block"><strong>答案：D</strong><br><span style="font-size:0.9em">解析：X 锁是排他锁，其他事务不能加任何锁。</span></div>
+                <p style="margin-top:8px; font-size:0.85em; color:var(--text-secondary)">📌 归属知识点：比较一、二、三级封锁协议</p>
+            </div>
+
+            <div class="question-block">
+                <strong>42. 在优化查询时，应尽可能先做</strong>
+                <p style="margin-left:20px; color:var(--text-secondary)">A.Select</p><p style="margin-left:20px; color:var(--text-secondary)">B.Join</p><p style="margin-left:20px; color:var(--text-secondary)">C.Project</p><p style="margin-left:20px; color:var(--text-secondary)">D.A 和 C</p>
+                <div class="answer-block"><strong>答案：D</strong><br><span style="font-size:0.9em">解析：选择和投影操作应尽可能先做。</span></div>
+                <p style="margin-top:8px; font-size:0.85em; color:var(--text-secondary)">📌 归属知识点：查询优化的一般步骤</p>
+            </div>
+
+            <div class="question-block">
+                <strong>43. 关系中的某一属性组，若它的值唯一地标识了一元组，则称该属性组为</strong>
+                <p style="margin-left:20px; color:var(--text-secondary)">A.候选码</p><p style="margin-left:20px; color:var(--text-secondary)">B.主码</p><p style="margin-left:20px; color:var(--text-secondary)">C.外来码</p><p style="margin-left:20px; color:var(--text-secondary)">D.替代码</p>
+                <div class="answer-block"><strong>答案：A</strong><br><span style="font-size:0.9em">解析：候选码是能唯一标识元组的属性组。</span></div>
+                <p style="margin-top:8px; font-size:0.85em; color:var(--text-secondary)">📌 归属知识点：什么是主属性</p>
+            </div>
+
+            <div class="question-block">
+                <strong>44. 在数据库中，下列说法不正确的是</strong>
+                <p style="margin-left:20px; color:var(--text-secondary)">A.数据库避免了一切数据的重复</p><p style="margin-left:20px; color:var(--text-secondary)">B.若系统是完全可以控制的，则系统可确保更新时的一致性</p><p style="margin-left:20px; color:var(--text-secondary)">C.数据库中的数据可以共享</p><p style="margin-left:20px; color:var(--text-secondary)">D.数据库减少了数据冗余</p>
+                <div class="answer-block"><strong>答案：A</strong><br><span style="font-size:0.9em">解析：数据库减少冗余但不能避免一切重复。</span></div>
+                <p style="margin-top:8px; font-size:0.85em; color:var(--text-secondary)">📌 归属知识点：数据库系统的特点</p>
+            </div>
+
+            <div class="question-block">
+                <strong>45. 存储在计算机内有结构的数据的集合是</strong>
+                <p style="margin-left:20px; color:var(--text-secondary)">A.数据库系统</p><p style="margin-left:20px; color:var(--text-secondary)">B.数据库</p><p style="margin-left:20px; color:var(--text-secondary)">C.数据库管理系统</p><p style="margin-left:20px; color:var(--text-secondary)">D.数据结构</p>
+                <div class="answer-block"><strong>答案：B</strong><br><span style="font-size:0.9em">解析：数据库是存储在计算机内有结构的数据的集合。</span></div>
+                <p style="margin-top:8px; font-size:0.85em; color:var(--text-secondary)">📌 归属知识点：DB, DBMS 和 DBS 三者间的关系</p>
+            </div>
+
+            <div class="question-block">
+                <strong>46. 在数据库设计中用关系模型来表示实体和实体之间的联系。关系模型的结构是</strong>
+                <p style="margin-left:20px; color:var(--text-secondary)">A.层次结构</p><p style="margin-left:20px; color:var(--text-secondary)">B.二维表结构</p><p style="margin-left:20px; color:var(--text-secondary)">C.网状结构</p><p style="margin-left:20px; color:var(--text-secondary)">D.封装结构</p>
+                <div class="answer-block"><strong>答案：B</strong><br><span style="font-size:0.9em">解析：关系模型采用二维表结构。</span></div>
+                <p style="margin-top:8px; font-size:0.85em; color:var(--text-secondary)">📌 归属知识点：ER 图如何转换成关系数据模型</p>
+            </div>
+
+            <div class="question-block">
+                <strong>47. 关系模式的任何属性</strong>
+                <p style="margin-left:20px; color:var(--text-secondary)">A.不可再分</p><p style="margin-left:20px; color:var(--text-secondary)">B.可再分</p><p style="margin-left:20px; color:var(--text-secondary)">C.命名在该关系模式中可以不惟一</p><p style="margin-left:20px; color:var(--text-secondary)">D.以上都不是</p>
+                <div class="answer-block"><strong>答案：A</strong><br><span style="font-size:0.9em">解析：1NF 要求属性不可再分。</span></div>
+                <p style="margin-top:8px; font-size:0.85em; color:var(--text-secondary)">📌 归属知识点：1NF, 2NF, 3NF, BCNF</p>
+            </div>
+
+            <div class="question-block">
+                <strong>48. 在关系模式 R 中，若其函数依赖集中所有候选关键字都是决定因素，则 R 最高范式是</strong>
+                <p style="margin-left:20px; color:var(--text-secondary)">A.BCNF</p><p style="margin-left:20px; color:var(--text-secondary)">B.3NF</p><p style="margin-left:20px; color:var(--text-secondary)">C.4NF</p><p style="margin-left:20px; color:var(--text-secondary)">D.5NF</p>
+                <div class="answer-block"><strong>答案：A</strong><br><span style="font-size:0.9em">解析：BCNF 要求所有决定因素都是候选码。</span></div>
+                <p style="margin-top:8px; font-size:0.85em; color:var(--text-secondary)">📌 归属知识点：1NF, 2NF, 3NF, BCNF</p>
+            </div>
+
+            <div class="question-block">
+                <strong>49. 数据库逻辑设计的主要任务是</strong>
+                <p style="margin-left:20px; color:var(--text-secondary)">A.建立 E-R 图和说明书</p><p style="margin-left:20px; color:var(--text-secondary)">B.创建数据库说明</p><p style="margin-left:20px; color:var(--text-secondary)">C.建立数据流图</p><p style="margin-left:20px; color:var(--text-secondary)">D.把数据送入数据库</p>
+                <div class="answer-block"><strong>答案：B</strong><br><span style="font-size:0.9em">解析：逻辑设计阶段主要任务是将概念模型转换为数据模型。</span></div>
+                <p style="margin-top:8px; font-size:0.85em; color:var(--text-secondary)">📌 归属知识点：数据库设计中，各个阶段的任务</p>
+            </div>
+
+            <div class="question-block">
+                <strong>50. 不允许任何其他事务对这个锁定目标再加任何类型锁的锁是</strong>
+                <p style="margin-left:20px; color:var(--text-secondary)">A.共享锁</p><p style="margin-left:20px; color:var(--text-secondary)">B.排它锁</p><p style="margin-left:20px; color:var(--text-secondary)">C.共享锁或排它锁</p><p style="margin-left:20px; color:var(--text-secondary)">D.以上都不是</p>
+                <div class="answer-block"><strong>答案：B</strong><br><span style="font-size:0.9em">解析：排它锁（X 锁）不允许其他事务加任何锁。</span></div>
+                <p style="margin-top:8px; font-size:0.85em; color:var(--text-secondary)">📌 归属知识点：比较一、二、三级封锁协议</p>
+            </div>
+
+            <div class="question-block">
+                <strong>51. 在多进程环境下，尤为重要</strong>
+                <p style="margin-left:20px; color:var(--text-secondary)">A.并发控制</p><p style="margin-left:20px; color:var(--text-secondary)">B.缓存管理</p><p style="margin-left:20px; color:var(--text-secondary)">C.死锁控制</p><p style="margin-left:20px; color:var(--text-secondary)">D.授权</p>
+                <div class="answer-block"><strong>答案：A</strong><br><span style="font-size:0.9em">解析：多进程环境下并发控制尤为重要。</span></div>
+                <p style="margin-top:8px; font-size:0.85em; color:var(--text-secondary)">📌 归属知识点：并发操作可能会产生哪几类数据不一致</p>
+            </div>
+
+            <div class="question-block">
+                <strong>52. 在数据库中，产生数据不一致的根本原因是</strong>
+                <p style="margin-left:20px; color:var(--text-secondary)">A.数据存储量太大</p><p style="margin-left:20px; color:var(--text-secondary)">B.没有严格保护数据</p><p style="margin-left:20px; color:var(--text-secondary)">C.未对数据进行完整性控制</p><p style="margin-left:20px; color:var(--text-secondary)">D.数据冗余</p>
+                <div class="answer-block"><strong>答案：D</strong><br><span style="font-size:0.9em">解析：数据冗余是产生数据不一致的根本原因。</span></div>
+                <p style="margin-top:8px; font-size:0.85em; color:var(--text-secondary)">📌 归属知识点：数据库系统的特点</p>
+            </div>
+
+            <div class="question-block">
+                <strong>53. SQL 语言是</strong>
+                <p style="margin-left:20px; color:var(--text-secondary)">A.层次数据库</p><p style="margin-left:20px; color:var(--text-secondary)">B.网络数据库</p><p style="margin-left:20px; color:var(--text-secondary)">C.关系数据库</p><p style="margin-left:20px; color:var(--text-secondary)">D.非数据库</p>
+                <div class="answer-block"><strong>答案：C</strong><br><span style="font-size:0.9em">解析：SQL 是关系数据库的标准语言。</span></div>
+                <p style="margin-top:8px; font-size:0.85em; color:var(--text-secondary)">📌 归属知识点：SQL 基本操作</p>
+            </div>
+
+            <div class="question-block">
+                <strong>54. 关系模式中，满足 2NF 的模式</strong>
+                <p style="margin-left:20px; color:var(--text-secondary)">A.可能是 1NF</p><p style="margin-left:20px; color:var(--text-secondary)">B.必定是 1NF</p><p style="margin-left:20px; color:var(--text-secondary)">C.必定是 3NF</p><p style="margin-left:20px; color:var(--text-secondary)">D.必定是 BCNF</p>
+                <div class="answer-block"><strong>答案：B</strong><br><span style="font-size:0.9em">解析：2NF 必定满足 1NF。</span></div>
+                <p style="margin-top:8px; font-size:0.85em; color:var(--text-secondary)">📌 归属知识点：1NF, 2NF, 3NF, BCNF</p>
+            </div>
+
+            <div class="question-block">
+                <strong>55. 下面哪个不是数据库系统必须提供的数据控制功能</strong>
+                <p style="margin-left:20px; color:var(--text-secondary)">A.安全性</p><p style="margin-left:20px; color:var(--text-secondary)">B.可移植性</p><p style="margin-left:20px; color:var(--text-secondary)">C.完整性</p><p style="margin-left:20px; color:var(--text-secondary)">D.并发控制</p>
+                <div class="answer-block"><strong>答案：B</strong><br><span style="font-size:0.9em">解析：可移植性不是数据库系统必须提供的控制功能。</span></div>
+                <p style="margin-top:8px; font-size:0.85em; color:var(--text-secondary)">📌 归属知识点：数据库系统必须提供的数据控制功能</p>
+            </div>
+
+            <div class="question-block">
+                <strong>56. 数据库系统的并发控制的主要方法是采用</strong>
+                <p style="margin-left:20px; color:var(--text-secondary)">A.拒绝</p><p style="margin-left:20px; color:var(--text-secondary)">B.改为串行</p><p style="margin-left:20px; color:var(--text-secondary)">C.封锁</p><p style="margin-left:20px; color:var(--text-secondary)">D.不加任何控制</p>
+                <div class="answer-block"><strong>答案：C</strong><br><span style="font-size:0.9em">解析：封锁是并发控制的主要方法。</span></div>
+                <p style="margin-top:8px; font-size:0.85em; color:var(--text-secondary)">📌 归属知识点：并发操作可能会产生哪几类数据不一致</p>
+            </div>
+
+            <div class="question-block">
+                <strong>57. 实际 DBMS 所支持的数据模型主要有三种，当前 DBMS 所支持的数据模型的主流是</strong>
+                <p style="margin-left:20px; color:var(--text-secondary)">A.Hierarchical model</p><p style="margin-left:20px; color:var(--text-secondary)">B.Network model</p><p style="margin-left:20px; color:var(--text-secondary)">C.Relational model</p><p style="margin-left:20px; color:var(--text-secondary)">D.A 和 B</p>
+                <div class="answer-block"><strong>答案：C</strong><br><span style="font-size:0.9em">解析：当前主流是关系模型。</span></div>
+                <p style="margin-top:8px; font-size:0.85em; color:var(--text-secondary)">📌 归属知识点：关系模式的定义</p>
+            </div>
+
+            <div class="question-block">
+                <strong>58. 数据库管理系统中用于定义和描述数据库逻辑结构的语言称为</strong>
+                <p style="margin-left:20px; color:var(--text-secondary)">A.数据库模式描述语言</p><p style="margin-left:20px; color:var(--text-secondary)">B.数据库子语言</p><p style="margin-left:20px; color:var(--text-secondary)">C.数据操纵语言</p><p style="margin-left:20px; color:var(--text-secondary)">D.数据结构语言</p>
+                <div class="answer-block"><strong>答案：A</strong><br><span style="font-size:0.9em">解析：DDL 用于定义和描述数据库逻辑结构。</span></div>
+                <p style="margin-top:8px; font-size:0.85em; color:var(--text-secondary)">📌 归属知识点：数据库管理系统的主要功能</p>
+            </div>
+
+            <div class="question-block">
+                <strong>59. SQL 语言的数据操纵语句包括 SELECT，INSERT，UPDATE 和 DELETE 等。其中最重要的，也是使用最频繁的语句是</strong>
+                <p style="margin-left:20px; color:var(--text-secondary)">A.SELECT</p><p style="margin-left:20px; color:var(--text-secondary)">B.INSERT</p><p style="margin-left:20px; color:var(--text-secondary)">C.UPDATE</p><p style="margin-left:20px; color:var(--text-secondary)">D.DELETE</p>
+                <div class="answer-block"><strong>答案：A</strong><br><span style="font-size:0.9em">解析：SELECT 是最重要且使用最频繁的语句。</span></div>
+                <p style="margin-top:8px; font-size:0.85em; color:var(--text-secondary)">📌 归属知识点：SQL 基本操作</p>
+            </div>
+
+            <div class="question-block">
+                <strong>60. 消除了部分函数依赖的 1NF 的关系模式，必定是</strong>
+                <p style="margin-left:20px; color:var(--text-secondary)">A.1NF</p><p style="margin-left:20px; color:var(--text-secondary)">B.2NF</p><p style="margin-left:20px; color:var(--text-secondary)">C.3NF</p><p style="margin-left:20px; color:var(--text-secondary)">D.4NF</p>
+                <div class="answer-block"><strong>答案：B</strong><br><span style="font-size:0.9em">解析：消除部分函数依赖后达到 2NF。</span></div>
+                <p style="margin-top:8px; font-size:0.85em; color:var(--text-secondary)">📌 归属知识点：1NF, 2NF, 3NF, BCNF</p>
+            </div>
+
+            <div class="question-block">
+                <strong>61. 数据库的是什么是指数据的正确性和相容性</strong>
+                <p style="margin-left:20px; color:var(--text-secondary)">A.安全性</p><p style="margin-left:20px; color:var(--text-secondary)">B.完整性</p><p style="margin-left:20px; color:var(--text-secondary)">C.并发控制</p><p style="margin-left:20px; color:var(--text-secondary)">D.恢复</p>
+                <div class="answer-block"><strong>答案：B</strong><br><span style="font-size:0.9em">解析：完整性指数据的正确性和相容性。</span></div>
+                <p style="margin-top:8px; font-size:0.85em; color:var(--text-secondary)">📌 归属知识点：数据库的完整性</p>
+            </div>
+
+            <div class="question-block">
+                <strong>62. 若数据库中只包含成功事务提交的结果，则此数据库就称为处于</strong>
+                <p style="margin-left:20px; color:var(--text-secondary)">A.安全</p><p style="margin-left:20px; color:var(--text-secondary)">B.一致</p><p style="margin-left:20px; color:var(--text-secondary)">C.不安全</p><p style="margin-left:20px; color:var(--text-secondary)">D.不一致</p>
+                <div class="answer-block"><strong>答案：B</strong><br><span style="font-size:0.9em">解析：只包含成功提交结果的数据库处于一致状态。</span></div>
+                <p style="margin-top:8px; font-size:0.85em; color:var(--text-secondary)">📌 归属知识点：事务的 ACID 特性</p>
+            </div>
+
+            <div class="question-block">
+                <strong>63. 在关系数据库中实现了数据表示的单一性，实体及实体之间的联系都用一种数据结构来表示</strong>
+                <p style="margin-left:20px; color:var(--text-secondary)">A.数据字典</p><p style="margin-left:20px; color:var(--text-secondary)">B.表</p><p style="margin-left:20px; color:var(--text-secondary)">C.文件</p><p style="margin-left:20px; color:var(--text-secondary)">D.数据库</p>
+                <div class="answer-block"><strong>答案：B</strong><br><span style="font-size:0.9em">解析：关系数据库中实体和联系都用表表示。</span></div>
+                <p style="margin-top:8px; font-size:0.85em; color:var(--text-secondary)">📌 归属知识点：关系模式的定义</p>
+            </div>
+
+            <div class="question-block">
+                <strong>64. 是指当数据的物理结构改变时，可使数据的总体逻辑结构不变，从而应用程序不变</strong>
+                <p style="margin-left:20px; color:var(--text-secondary)">A.数据的独立性</p><p style="margin-left:20px; color:var(--text-secondary)">B.数据的物理独立性</p><p style="margin-left:20px; color:var(--text-secondary)">C.数据的逻辑独立性</p><p style="margin-left:20px; color:var(--text-secondary)">D.SPARC 结构</p>
+                <div class="answer-block"><strong>答案：B</strong><br><span style="font-size:0.9em">解析：物理独立性指物理结构改变不影响逻辑结构。</span></div>
+                <p style="margin-top:8px; font-size:0.85em; color:var(--text-secondary)">📌 归属知识点：数据独立性是什么</p>
+            </div>
+
+            <div class="question-block">
+                <strong>65. 数据库管理系统的主要功能是</strong>
+                <p style="margin-left:20px; color:var(--text-secondary)">A.修改数据库</p><p style="margin-left:20px; color:var(--text-secondary)">B.定义数据库</p><p style="margin-left:20px; color:var(--text-secondary)">C.应用数据库</p><p style="margin-left:20px; color:var(--text-secondary)">D.保护数据库</p>
+                <div class="answer-block"><strong>答案：B</strong><br><span style="font-size:0.9em">解析：定义数据库是 DBMS 的主要功能之一。</span></div>
+                <p style="margin-top:8px; font-size:0.85em; color:var(--text-secondary)">📌 归属知识点：数据库管理系统的主要功能</p>
+            </div>
+
+            <div class="question-block">
+                <strong>66. 候选关键字中的属性可以有</strong>
+                <p style="margin-left:20px; color:var(--text-secondary)">A.0 个</p><p style="margin-left:20px; color:var(--text-secondary)">B.1 个</p><p style="margin-left:20px; color:var(--text-secondary)">C.1 个或多个</p><p style="margin-left:20px; color:var(--text-secondary)">D.多个</p>
+                <div class="answer-block"><strong>答案：C</strong><br><span style="font-size:0.9em">解析：候选关键字可以有 1 个或多个属性。</span></div>
+                <p style="margin-top:8px; font-size:0.85em; color:var(--text-secondary)">📌 归属知识点：什么是主属性</p>
+            </div>
+
+            <div class="question-block">
+                <strong>67. 在数据系统中，对存取权限的定义称为</strong>
+                <p style="margin-left:20px; color:var(--text-secondary)">A.命令</p><p style="margin-left:20px; color:var(--text-secondary)">B.授权</p><p style="margin-left:20px; color:var(--text-secondary)">C.定义</p><p style="margin-left:20px; color:var(--text-secondary)">D.审计</p>
+                <div class="answer-block"><strong>答案：B</strong><br><span style="font-size:0.9em">解析：对存取权限的定义称为授权。</span></div>
+                <p style="margin-top:8px; font-size:0.85em; color:var(--text-secondary)">📌 归属知识点：DBMS 存取控制机制主要包括</p>
+            </div>
+
+            <div class="question-block">
+                <strong>68. 若系统在运行过程中，由于某种硬件故障，使存储在外存上的数据部分损失或全部损失，这种情况称为</strong>
+                <p style="margin-left:20px; color:var(--text-secondary)">A.事务故障</p><p style="margin-left:20px; color:var(--text-secondary)">B.系统故障</p><p style="margin-left:20px; color:var(--text-secondary)">C.介质故障</p><p style="margin-left:20px; color:var(--text-secondary)">D.运行故障</p>
+                <div class="answer-block"><strong>答案：C</strong><br><span style="font-size:0.9em">解析：外存数据损失属于介质故障。</span></div>
+                <p style="margin-top:8px; font-size:0.85em; color:var(--text-secondary)">📌 归属知识点：数据库系统中的常见故障有那些</p>
+            </div>
+
+            <div class="question-block">
+                <strong>69. 数据库系统的核心是</strong>
+                <p style="margin-left:20px; color:var(--text-secondary)">A.编译系统</p><p style="margin-left:20px; color:var(--text-secondary)">B.数据库</p><p style="margin-left:20px; color:var(--text-secondary)">C.操作系统</p><p style="margin-left:20px; color:var(--text-secondary)">D.数据库管理系统</p>
+                <div class="answer-block"><strong>答案：D</strong><br><span style="font-size:0.9em">解析：DBMS 是数据库系统的核心。</span></div>
+                <p style="margin-top:8px; font-size:0.85em; color:var(--text-secondary)">📌 归属知识点：DB, DBMS 和 DBS 三者间的关系</p>
+            </div>
+
+            <div class="question-block">
+                <strong>70. 数据库系统的特点是、数据独立、减少数据冗余、避免数据不一致和加强了数据保护</strong>
+                <p style="margin-left:20px; color:var(--text-secondary)">A.数据共享</p><p style="margin-left:20px; color:var(--text-secondary)">B.数据存储</p><p style="margin-left:20px; color:var(--text-secondary)">C.数据应用</p><p style="margin-left:20px; color:var(--text-secondary)">D.数据保密</p>
+                <div class="answer-block"><strong>答案：A</strong><br><span style="font-size:0.9em">解析：数据共享是数据库系统的特点之一。</span></div>
+                <p style="margin-top:8px; font-size:0.85em; color:var(--text-secondary)">📌 归属知识点：数据库系统的特点</p>
+            </div>
+
+            <div class="question-block">
+                <strong>71. 数据库管理系统的工作不包括</strong>
+                <p style="margin-left:20px; color:var(--text-secondary)">A.定义数据库</p><p style="margin-left:20px; color:var(--text-secondary)">B.对已定义的数据库进行管理</p><p style="margin-left:20px; color:var(--text-secondary)">C.为定义的数据库提供操作系统</p><p style="margin-left:20px; color:var(--text-secondary)">D.数据通信</p>
+                <div class="answer-block"><strong>答案：C</strong><br><span style="font-size:0.9em">解析：DBMS 不提供操作系统。</span></div>
+                <p style="margin-top:8px; font-size:0.85em; color:var(--text-secondary)">📌 归属知识点：数据库管理系统的主要功能</p>
+            </div>
+
+            <div class="question-block">
+                <strong>72. SQL 语言具有两种使用方式，分别称为交互式 SQL 和</strong>
+                <p style="margin-left:20px; color:var(--text-secondary)">A.提示式 SQL</p><p style="margin-left:20px; color:var(--text-secondary)">B.多用户 SQL</p><p style="margin-left:20px; color:var(--text-secondary)">C.嵌入式 SQL</p><p style="margin-left:20px; color:var(--text-secondary)">D.解释式 SQL</p>
+                <div class="answer-block"><strong>答案：C</strong><br><span style="font-size:0.9em">解析：SQL 有交互式和嵌入式两种使用方式。</span></div>
+                <p style="margin-top:8px; font-size:0.85em; color:var(--text-secondary)">📌 归属知识点：SQL 基本操作</p>
+            </div>
+
+            <div class="question-block">
+                <strong>73. 数据库管理系统是</strong>
+                <p style="margin-left:20px; color:var(--text-secondary)">A.操作系统的一部分</p><p style="margin-left:20px; color:var(--text-secondary)">B.在操作系统支持下的系统软件</p><p style="margin-left:20px; color:var(--text-secondary)">C.一种编译程序</p><p style="margin-left:20px; color:var(--text-secondary)">D.一种操作系统</p>
+                <div class="answer-block"><strong>答案：B</strong><br><span style="font-size:0.9em">解析：DBMS 是在操作系统支持下的系统软件。</span></div>
+                <p style="margin-top:8px; font-size:0.85em; color:var(--text-secondary)">📌 归属知识点：DB, DBMS 和 DBS 三者间的关系</p>
+            </div>
+
+            <div class="question-block">
+                <strong>74. 在数据库的三级模式结构中，描述数据库中全体数据的全局逻辑结构和特征的是</strong>
+                <p style="margin-left:20px; color:var(--text-secondary)">A.外模式</p><p style="margin-left:20px; color:var(--text-secondary)">B.内模式</p><p style="margin-left:20px; color:var(--text-secondary)">C.存储模式</p><p style="margin-left:20px; color:var(--text-secondary)">D.模式</p>
+                <div class="answer-block"><strong>答案：D</strong><br><span style="font-size:0.9em">解析：模式描述全局逻辑结构和特征。</span></div>
+                <p style="margin-top:8px; font-size:0.85em; color:var(--text-secondary)">📌 归属知识点：DB, DBMS 和 DBS 三者间的关系</p>
+            </div>
+
+            <div class="question-block">
+                <strong>75. 在一个关系中如果有这样一个属性存在，它的值能惟一地标识关系中的每一个元组，称这个属性为</strong>
+                <p style="margin-left:20px; color:var(--text-secondary)">A.关键字</p><p style="margin-left:20px; color:var(--text-secondary)">B.数据项</p><p style="margin-left:20px; color:var(--text-secondary)">C.主属性</p><p style="margin-left:20px; color:var(--text-secondary)">D.主属性值</p>
+                <div class="answer-block"><strong>答案：A</strong><br><span style="font-size:0.9em">解析：能唯一标识元组的属性称为关键字。</span></div>
+                <p style="margin-top:8px; font-size:0.85em; color:var(--text-secondary)">📌 归属知识点：什么是主属性</p>
+            </div>
+
+            <div class="question-block">
+                <strong>76. 设有关系 W（工号，姓名，工种，定额），将其规范化到第三范式正确的答案是</strong>
+                <p style="margin-left:20px; color:var(--text-secondary)">A.W1（工号，姓名）W2（工种，定额）</p><p style="margin-left:20px; color:var(--text-secondary)">B.W1（工号，工种，定额）W2（工号，姓名）</p><p style="margin-left:20px; color:var(--text-secondary)">C.W1（工号，姓名，工种）W2（工号，定额）</p><p style="margin-left:20px; color:var(--text-secondary)">D.以上都不对</p>
+                <div class="answer-block"><strong>答案：A</strong><br><span style="font-size:0.9em">解析：分解为 W1（工号，姓名）和 W2（工种，定额）可消除传递依赖。</span></div>
+                <p style="margin-top:8px; font-size:0.85em; color:var(--text-secondary)">📌 归属知识点：1NF, 2NF, 3NF, BCNF</p>
+            </div>
+
+            <div class="question-block">
+                <strong>77. 是 DBMS 的基本单位，它是用户定义的一组逻辑一致的程序序列</strong>
+                <p style="margin-left:20px; color:var(--text-secondary)">A.程序</p><p style="margin-left:20px; color:var(--text-secondary)">B.命令</p><p style="margin-left:20px; color:var(--text-secondary)">C.事务</p><p style="margin-left:20px; color:var(--text-secondary)">D.文件</p>
+                <div class="answer-block"><strong>答案：C</strong><br><span style="font-size:0.9em">解析：事务是 DBMS 的基本单位。</span></div>
+                <p style="margin-top:8px; font-size:0.85em; color:var(--text-secondary)">📌 归属知识点：事务的 ACID 特性</p>
+            </div>
+
+            <div class="question-block">
+                <strong>78. 用于数据库恢复的重要文件是</strong>
+                <p style="margin-left:20px; color:var(--text-secondary)">A.数据库文件</p><p style="margin-left:20px; color:var(--text-secondary)">B.索引文件</p><p style="margin-left:20px; color:var(--text-secondary)">C.日志文件</p><p style="margin-left:20px; color:var(--text-secondary)">D.备注文件</p>
+                <div class="answer-block"><strong>答案：C</strong><br><span style="font-size:0.9em">解析：日志文件用于数据库恢复。</span></div>
+                <p style="margin-top:8px; font-size:0.85em; color:var(--text-secondary)">📌 归属知识点：什么是日志文件？为什么要设立日志文件</p>
+            </div>
+
+            <div class="question-block">
+                <strong>79. SQL 语言不是</strong>
+                <p style="margin-left:20px; color:var(--text-secondary)">A.一种通用的程序设计语言</p><p style="margin-left:20px; color:var(--text-secondary)">B.ISO 标准</p><p style="margin-left:20px; color:var(--text-secondary)">C.ANSI 标准</p><p style="margin-left:20px; color:var(--text-secondary)">D.Structured Query Language</p>
+                <div class="answer-block"><strong>答案：A</strong><br><span style="font-size:0.9em">解析：SQL 不是通用的程序设计语言。</span></div>
+                <p style="margin-top:8px; font-size:0.85em; color:var(--text-secondary)">📌 归属知识点：SQL 基本操作</p>
+            </div>
+
+            <div class="question-block">
+                <strong>80. SQL 的 DML 语句包括</strong>
+                <p style="margin-left:20px; color:var(--text-secondary)">A.SELECT、INSERT，ROLLBACK 和 COMMIT</p><p style="margin-left:20px; color:var(--text-secondary)">B.SELECT、INSERT，DELETE 和 UPDATE</p><p style="margin-left:20px; color:var(--text-secondary)">C.AND、OR、NOT 和 UNION</p><p style="margin-left:20px; color:var(--text-secondary)">D.JOIN、PROJECT、AND 和 NOT</p>
+                <div class="answer-block"><strong>答案：B</strong><br><span style="font-size:0.9em">解析：DML 包括 SELECT、INSERT、DELETE、UPDATE。</span></div>
+                <p style="margin-top:8px; font-size:0.85em; color:var(--text-secondary)">📌 归属知识点：SQL 基本操作</p>
+            </div>
+
+            <div class="question-block">
+                <strong>81. SQL 语言查询处理的对象是表，查询结果是</strong>
+                <p style="margin-left:20px; color:var(--text-secondary)">A.视图</p><p style="margin-left:20px; color:var(--text-secondary)">B.元组</p><p style="margin-left:20px; color:var(--text-secondary)">C.字段</p><p style="margin-left:20px; color:var(--text-secondary)">D.表</p>
+                <div class="answer-block"><strong>答案：D</strong><br><span style="font-size:0.9em">解析：SQL 查询结果是表。</span></div>
+                <p style="margin-top:8px; font-size:0.85em; color:var(--text-secondary)">📌 归属知识点：SQL 基本操作</p>
+            </div>
+
+            <div class="question-block">
+                <strong>82. 数据库系统的数据独立性是指</strong>
+                <p style="margin-left:20px; color:var(--text-secondary)">A.不会因为数据的变化而影响应用程序</p><p style="margin-left:20px; color:var(--text-secondary)">B.不会因为系统数据存储结构与数据逻辑结构的变化而影响应用程序</p><p style="margin-left:20px; color:var(--text-secondary)">C.不会因为存储策略的变化而影响存储结构</p><p style="margin-left:20px; color:var(--text-secondary)">D.不会因为某些存储结构的变化而影响其他的存储结构</p>
+                <div class="answer-block"><strong>答案：B</strong><br><span style="font-size:0.9em">解析：数据独立性指存储结构和逻辑结构变化不影响应用程序。</span></div>
+                <p style="margin-top:8px; font-size:0.85em; color:var(--text-secondary)">📌 归属知识点：数据独立性是什么</p>
+            </div>
+
+            <div class="question-block">
+                <strong>83. 为使程序员编程时既可使用数据库语言又可使用常规的程序设计语言，数据库系统需要把数据库语言嵌入到中</strong>
+                <p style="margin-left:20px; color:var(--text-secondary)">A.编译程序</p><p style="margin-left:20px; color:var(--text-secondary)">B.操作系统</p><p style="margin-left:20px; color:var(--text-secondary)">C.中间语言</p><p style="margin-left:20px; color:var(--text-secondary)">D.宿主语言</p>
+                <div class="answer-block"><strong>答案：D</strong><br><span style="font-size:0.9em">解析：数据库语言嵌入到宿主语言中。</span></div>
+                <p style="margin-top:8px; font-size:0.85em; color:var(--text-secondary)">📌 归属知识点：SQL 基本操作</p>
+            </div>
+
+            <div class="question-block">
+                <strong>84. 同一个关系模型的任两个元组值</strong>
+                <p style="margin-left:20px; color:var(--text-secondary)">A.不能全同</p><p style="margin-left:20px; color:var(--text-secondary)">B.可全同</p><p style="margin-left:20px; color:var(--text-secondary)">C.必须全同</p><p style="margin-left:20px; color:var(--text-secondary)">D.以上都不是</p>
+                <div class="answer-block"><strong>答案：A</strong><br><span style="font-size:0.9em">解析：关系模型中两个元组不能完全相同。</span></div>
+                <p style="margin-top:8px; font-size:0.85em; color:var(--text-secondary)">📌 归属知识点：关系模式的定义</p>
+            </div>
+
+            <div class="question-block">
+                <strong>85. 在数据库设计中，用 E-R 图来描述信息结构但不涉及信息在计算机中的表示，它是数据库设计的阶段</strong>
+                <p style="margin-left:20px; color:var(--text-secondary)">A.需求分析</p><p style="margin-left:20px; color:var(--text-secondary)">B.概念设计</p><p style="margin-left:20px; color:var(--text-secondary)">C.逻辑设计</p><p style="margin-left:20px; color:var(--text-secondary)">D.物理设计</p>
+                <div class="answer-block"><strong>答案：B</strong><br><span style="font-size:0.9em">解析：E-R 图用于概念设计阶段。</span></div>
+                <p style="margin-top:8px; font-size:0.85em; color:var(--text-secondary)">📌 归属知识点：数据库设计的主要步骤</p>
+            </div>
+
+            <div class="question-block">
+                <strong>86. 事务的原子性是指</strong>
+                <p style="margin-left:20px; color:var(--text-secondary)">A.事务中包括的所有操作要么都做，要么都不做</p><p style="margin-left:20px; color:var(--text-secondary)">B.事务一旦提交，对数据库的改变是永久的</p><p style="margin-left:20px; color:var(--text-secondary)">C.一个事务内部的操作及使用的数据对并发的其他事务是隔离的</p><p style="margin-left:20px; color:var(--text-secondary)">D.事务必须是使数据库从一个一致性状态变到另一个一致性状态</p>
+                <div class="answer-block"><strong>答案：A</strong><br><span style="font-size:0.9em">解析：原子性指事务操作要么都做要么都不做。</span></div>
+                <p style="margin-top:8px; font-size:0.85em; color:var(--text-secondary)">📌 归属知识点：事务的 ACID 特性</p>
+            </div>
+
+            <div class="question-block">
+                <strong>87. 日志文件是用于记录</strong>
+                <p style="margin-left:20px; color:var(--text-secondary)">A.程序运行过程</p><p style="margin-left:20px; color:var(--text-secondary)">B.数据操作</p><p style="margin-left:20px; color:var(--text-secondary)">C.对数据的所有更新操作</p><p style="margin-left:20px; color:var(--text-secondary)">D.程序执行的结果</p>
+                <div class="answer-block"><strong>答案：C</strong><br><span style="font-size:0.9em">解析：日志文件记录对数据的所有更新操作。</span></div>
+                <p style="margin-top:8px; font-size:0.85em; color:var(--text-secondary)">📌 归属知识点：什么是日志文件？为什么要设立日志文件</p>
+            </div>
+
+        </div>
+    </div>
+    <button class="theme-toggle" onclick="toggleTheme()" title="切换明暗模式">🌙</button>
+    <script>
+        function toggleTheme() { document.body.classList.toggle('dark-mode'); const btn = document.querySelector('.theme-toggle'); btn.textContent = document.body.classList.contains('dark-mode') ? '☀️' : '🌙'; localStorage.setItem('db-review-theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light'); }
+        function toggleSidebar() { document.getElementById('sidebar').classList.toggle('open'); }
+        if (localStorage.getItem('db-review-theme') === 'dark') { document.body.classList.add('dark-mode'); document.querySelector('.theme-toggle').textContent = '☀️'; }
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => { anchor.addEventListener('click', function(e) { e.preventDefault(); const target = document.querySelector(this.getAttribute('href')); if (target) { target.scrollIntoView({ behavior: 'smooth', block: 'start' }); if (window.innerWidth <= 768) { document.getElementById('sidebar').classList.remove('open'); } } }); });
+    </script>
+</body>
+</html>
